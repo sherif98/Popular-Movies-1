@@ -31,6 +31,7 @@ public class DisplayMoviesFragment extends Fragment {
         Bundle args = new Bundle();
         args.putInt(REQUEST_NUMBER, requestNumber);
         fragment.setArguments(args);
+
     }
 
 
