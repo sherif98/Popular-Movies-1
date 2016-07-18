@@ -12,7 +12,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import butterknife.BindView;
 import logic.Movie;
 
 public class MoviesCardsAdapter extends RecyclerView.Adapter<MoviesCardsAdapter.MovieViewHolder> {
@@ -30,13 +29,13 @@ public class MoviesCardsAdapter extends RecyclerView.Adapter<MoviesCardsAdapter.
     }
 
     public static class MovieViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.card_view_title)
         TextView title;
-        @BindView(R.id.card_view_image)
         ImageView image;
 
         public MovieViewHolder(View itemView) {
             super(itemView);
+            title = (TextView) itemView.findViewById(R.id.card_view_title);
+            image = (ImageView) itemView.findViewById(R.id.card_view_image);
         }
 
         public void bindMovie(Movie movie) {

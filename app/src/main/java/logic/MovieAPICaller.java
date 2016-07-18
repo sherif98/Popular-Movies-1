@@ -1,5 +1,7 @@
 package logic;
 
+import android.util.Log;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -29,35 +31,22 @@ public class MovieAPICaller {
     public List<Movie> getMoviesList(int requestNumber) throws MovieAPICallFailException {
         TheMovieDatabaseAPI.RequestType requestType = getCorrespondingRequestType(requestNumber);
         TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
-        Call<TheMovieDatabaseAPI.MovieListModel> call =
+        Call<MovieListModel> call =
                 service.getMoviesList(requestType.toString().toLowerCase());
-        List<Movie> list = getMoviesList(call);
-        if (list == null) {
-            throw new MovieAPICallFailException();
-        }
-        return list;
+        Log.v("before", requestType.toString().toLowerCase());
+        call.enqueue(new Callback<MovieListModel>() {
+            @Override
+            public void onResponse(Call<MovieListModel> call, Response<MovieListModel> response) {
+                Log.v("please", Boolean.toString(response.body().results == null));
+            }
+
+            @Override
+            public void onFailure(Call<MovieListModel> call, Throwable t) {
+                Log.v("callfailed", "a7a");
+            }
+        });
+        return null;
     }
-
-    private List<Movie> getMoviesList(Call<TheMovieDatabaseAPI.MovieListModel> call) {
-        CallBackHandler callBackHandler = new CallBackHandler();
-        call.enqueue(callBackHandler);
-        return callBackHandler.returnList;
-    }
-
-    private class CallBackHandler implements Callback<TheMovieDatabaseAPI.MovieListModel> {
-        List<Movie> returnList = null;
-
-        @Override
-        public void onResponse(Call<TheMovieDatabaseAPI.MovieListModel> call, Response<TheMovieDatabaseAPI.MovieListModel> response) {
-            returnList = response.body().results;
-        }
-
-        @Override
-        public void onFailure(Call<TheMovieDatabaseAPI.MovieListModel> call, Throwable t) {
-        }
-    }
-
-
     private TheMovieDatabaseAPI.RequestType getCorrespondingRequestType(int requestNumber) {
         TheMovieDatabaseAPI.RequestType types[] = TheMovieDatabaseAPI.RequestType.values();
         return types[requestNumber];

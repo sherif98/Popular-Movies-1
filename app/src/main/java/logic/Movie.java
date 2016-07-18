@@ -1,11 +1,11 @@
 package logic;
 
 public class Movie {
-    private int id;
     private String poster_path;
+    private int id;
     private String title;
 
-    public Movie(String poster_path, String title, int id) {
+    public Movie(String poster_path, int id, String title) {
         this.poster_path = poster_path;
         this.title = title;
         this.id = id;
