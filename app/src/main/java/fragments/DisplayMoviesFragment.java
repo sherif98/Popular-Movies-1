@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.nanodegree.udacity.android.popularmovies.R;
 
@@ -16,7 +16,6 @@ import java.util.List;
 
 import adapters.MoviesCardsAdapter;
 import logic.Movie;
-import logic.MovieAPICaller;
 import logic.MovieListModel;
 import logic.TheMovieDatabaseAPI;
 import retrofit2.Call;
@@ -30,6 +29,7 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     private static final String TAG = DisplayMoviesFragment.class.getSimpleName();
     private final static String REQUEST_NUMBER = "request";
     private RecyclerView recyclerView;
+    private List<Movie> list;
 
     public DisplayMoviesFragment() {
         // Required empty public constructor
@@ -60,9 +60,9 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     }
 
     private void setupRecyclerView() {
-        int requestNumber = getRequestNumber();
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        recyclerView.setAdapter(createAdapter(requestNumber));
+        int requestNumber = getRequestNumber();
+        attachAdapter(requestNumber);
     }
 
     private int getRequestNumber() {
@@ -71,35 +71,26 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     }
 
 
-    private RecyclerView.Adapter createAdapter(int requestNumber) {
-        MovieAPICaller movieAPICaller = MovieAPICaller.getInstance();
-        List<Movie> moviesList = null;
+    private void attachAdapter(int requestNumber) {
+        TheMovieDatabaseAPI.RequestType requestType = getCorrespondingRequestType(requestNumber);
         TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
-        Call<MovieListModel> call = service.getMoviesList(getCorrespondingRequestType(requestNumber)
-                .toString().toLowerCase());
+        Call<MovieListModel> call =
+                service.getMoviesList(requestType.toString().toLowerCase());
         call.enqueue(new Callback<MovieListModel>() {
             @Override
             public void onResponse(Call<MovieListModel> call, Response<MovieListModel> response) {
-                Log.v("fukoff", Boolean.toString(response.body().results == null));
-                MoviesCardsAdapter moviesCardsAdapter = new MoviesCardsAdapter(response.body().results,
-                        DisplayMoviesFragment.this);
+                MoviesCardsAdapter moviesCardsAdapter = new MoviesCardsAdapter(
+                        response.body().results, DisplayMoviesFragment.this);
                 recyclerView.setAdapter(moviesCardsAdapter);
             }
 
             @Override
             public void onFailure(Call<MovieListModel> call, Throwable t) {
-
+                Toast.makeText(getActivity(), "Connect Problem", Toast.LENGTH_SHORT).show();
             }
         });
-//        try {
-//            moviesList = movieAPICaller.getMoviesList(requestNumber);
-//        } catch (MovieAPICallFailException e) {
-////            e.printStackTrace();
-//        }
-//        Log.v(TAG, Boolean.toString(moviesList == null));
-//        MoviesCardsAdapter moviesCardsAdapter = new MoviesCardsAdapter(moviesList, this);
-        return null;
     }
+
 
     private TheMovieDatabaseAPI.RequestType getCorrespondingRequestType(int requestNumber) {
         TheMovieDatabaseAPI.RequestType types[] = TheMovieDatabaseAPI.RequestType.values();

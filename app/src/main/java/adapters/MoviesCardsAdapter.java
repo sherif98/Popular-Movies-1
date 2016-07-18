@@ -16,6 +16,7 @@ import logic.Movie;
 
 public class MoviesCardsAdapter extends RecyclerView.Adapter<MoviesCardsAdapter.MovieViewHolder> {
 
+
     public interface MovieClickListener {
         void onClickMovie(Movie movie);
     }
@@ -27,6 +28,7 @@ public class MoviesCardsAdapter extends RecyclerView.Adapter<MoviesCardsAdapter.
         this.moviesList = moviesList;
         this.movieClickListener = movieClickListener;
     }
+
 
     public static class MovieViewHolder extends RecyclerView.ViewHolder {
         TextView title;

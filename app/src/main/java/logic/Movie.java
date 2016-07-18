@@ -1,12 +1,17 @@
 package logic;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Movie {
-    private String poster_path;
+    @SerializedName("poster_path")
+    private String posterPath;
+    @SerializedName("id")
     private int id;
+    @SerializedName("title")
     private String title;
 
-    public Movie(String poster_path, int id, String title) {
-        this.poster_path = poster_path;
+    public Movie(String posterPath, int id, String title) {
+        this.posterPath = posterPath;
         this.title = title;
         this.id = id;
     }
@@ -16,7 +21,7 @@ public class Movie {
     }
 
     public String getPosterPath() {
-        return poster_path;
+        return posterPath;
     }
 
     public int getId() {
