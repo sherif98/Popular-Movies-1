@@ -9,6 +9,8 @@ import retrofit2.http.Path;
 public interface TheMovieDatabaseAPI {
 
     String RETROFIT_API_KEY = "?api_key=" + APIKeys.RETROFIT;
+    //APIKeys is an interface containing your api key as a string field
+
     String BASE_URL = "http://api.themoviedb.org/";
 
     enum RequestType {

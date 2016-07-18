@@ -12,8 +12,6 @@ import android.widget.Toast;
 
 import com.nanodegree.udacity.android.popularmovies.R;
 
-import java.util.List;
-
 import adapters.MoviesCardsAdapter;
 import logic.Movie;
 import logic.MovieListModel;
@@ -29,7 +27,7 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     private static final String TAG = DisplayMoviesFragment.class.getSimpleName();
     private final static String REQUEST_NUMBER = "request";
     private RecyclerView recyclerView;
-    private List<Movie> list;
+
 
     public DisplayMoviesFragment() {
         // Required empty public constructor
@@ -74,8 +72,7 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     private void attachAdapter(int requestNumber) {
         TheMovieDatabaseAPI.RequestType requestType = getCorrespondingRequestType(requestNumber);
         TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
-        Call<MovieListModel> call =
-                service.getMoviesList(requestType.toString().toLowerCase());
+        Call<MovieListModel> call = service.getMoviesList(requestType.toString().toLowerCase());
         call.enqueue(new Callback<MovieListModel>() {
             @Override
             public void onResponse(Call<MovieListModel> call, Response<MovieListModel> response) {
