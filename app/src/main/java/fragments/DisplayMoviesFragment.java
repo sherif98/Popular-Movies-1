@@ -14,9 +14,23 @@ import com.nanodegree.udacity.android.popularmovies.R;
  */
 public class DisplayMoviesFragment extends Fragment {
 
+    private final static String REQUEST_NUMBER = "request";
 
     public DisplayMoviesFragment() {
         // Required empty public constructor
+    }
+
+    public static DisplayMoviesFragment newInstance(int requestNumber) {
+        DisplayMoviesFragment fragment = new DisplayMoviesFragment();
+        setupFragmentArguments(fragment, requestNumber);
+        return fragment;
+    }
+
+    private static void setupFragmentArguments(DisplayMoviesFragment fragment,
+                                               int requestNumber) {
+        Bundle args = new Bundle();
+        args.putInt(REQUEST_NUMBER, requestNumber);
+        fragment.setArguments(args);
     }
 
 
