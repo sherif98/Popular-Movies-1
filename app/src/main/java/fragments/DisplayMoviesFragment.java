@@ -1,7 +1,9 @@
 package fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +29,14 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     private static final String TAG = DisplayMoviesFragment.class.getSimpleName();
     private final static String REQUEST_NUMBER = "request";
     private RecyclerView recyclerView;
+    private CallBacks mCallbacks;
+
+    /*
+     * an interface to be implemented by the hosting activity
+     */
+    public interface CallBacks {
+        void onMovieClicked(Movie movie);
+    }
 
 
     public DisplayMoviesFragment() {
@@ -46,6 +56,26 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
         fragment.setArguments(args);
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof CallBacks) {
+            mCallbacks = (CallBacks) context;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        //TODO save instance
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,6 +126,6 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
 
     @Override
     public void onClickMovie(Movie movie) {
-
+        mCallbacks.onMovieClicked(movie);
     }
 }
