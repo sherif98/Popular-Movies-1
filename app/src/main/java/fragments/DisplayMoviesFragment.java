@@ -10,11 +10,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Toast;
 
 import com.nanodegree.udacity.android.popularmovies.R;
 
 import adapters.MoviesCardsAdapter;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import logic.Movie;
 import logic.MovieListModel;
 import logic.TheMovieDatabaseAPI;
@@ -109,6 +111,7 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
                 MoviesCardsAdapter moviesCardsAdapter = new MoviesCardsAdapter(
                         response.body().results, DisplayMoviesFragment.this);
                 recyclerView.setAdapter(moviesCardsAdapter);
+                recyclerView.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(1f)));
             }
 
             @Override

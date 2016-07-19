@@ -34,21 +34,21 @@ public interface TheMovieDatabaseAPI {
     /*
      * use it to get details about a movie given the id (movie name, pictures, overview, etc..)
      */
-    @GET("/3/movie/{id}" + RETROFIT_API_KEY)
+    @GET("/3/movie/{id}" + RETROFIT_API_KEY + "&append_to_response=reviews,trailers")
     Call<DetailMovie> getmovieData(@Path("id") String id);
 
-    /*
-     * use it to get reviews of a movie given its id
-     */
-    @GET("/3/movie/{id}/reviews" + RETROFIT_API_KEY)
-    Call<ReviewListModel> getMovieReview(@Path("id") String id);
-
-
-    /*
-     * use it to get trailers of a movie givenn its id
-     */
-    @GET("/3/movie/{id}/videos" + RETROFIT_API_KEY)
-    Call<TrailerListModel> getMovieTrailers(@Path("id") String id);
+//    /*
+//     * use it to get reviews of a movie given its id
+//     */
+//    @GET("/3/movie/{id}/reviews" + RETROFIT_API_KEY)
+//    Call<ReviewListModel> getMovieReview(@Path("id") String id);
+//
+//
+//    /*
+//     * use it to get trailers of a movie givenn its id
+//     */
+//    @GET("/3/movie/{id}/videos" + RETROFIT_API_KEY)
+//    Call<TrailerListModel> getMovieTrailers(@Path("id") String id);
 
 
 }

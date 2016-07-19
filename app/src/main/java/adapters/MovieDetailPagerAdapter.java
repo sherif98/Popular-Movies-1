@@ -5,20 +5,22 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import logic.DetailMovieFragmentController;
-import logic.DetailType;
 
 public class MovieDetailPagerAdapter extends FragmentPagerAdapter {
     DetailMovieFragmentController mController;
+    private final static String[] detailType = {"MOVIE", "REVIEWS", "TRAILERS"};
 
-    public MovieDetailPagerAdapter(FragmentManager fm, DetailMovieFragmentController controller) {
+    public MovieDetailPagerAdapter(FragmentManager fm) {
         super(fm);
+    }
+
+    public void setController(DetailMovieFragmentController controller) {
         mController = controller;
     }
 
     @Override
     public Fragment getItem(int position) {
         return mController.getFragment(position);
-
     }
 
     @Override
@@ -28,6 +30,6 @@ public class MovieDetailPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return DetailType.values()[position].toString();
+        return detailType[0];
     }
 }

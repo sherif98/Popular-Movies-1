@@ -1,10 +1,11 @@
 package logic;
 
+import android.util.Log;
+
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class DetailMovieBuilder {
     private DetailMovie mDetailMovie;
@@ -12,59 +13,74 @@ public class DetailMovieBuilder {
 
     public DetailMovieBuilder(int movieId) {
         this.mMovieId = Integer.toString(movieId);
+//        mDetailMovie = new DetailMovie();
         buildDetailMovie();
-        buildTrailers();
-        buildReviews();
+//        buildTrailers();
+        Log.v("aftermethodcall", Boolean.toString(mDetailMovie == null));
+//        buildReviews();
     }
 
     private void buildDetailMovie() {
+
         TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
         Call<DetailMovie> call = service.getmovieData(mMovieId);
-        call.enqueue(new Callback<DetailMovie>() {
-            @Override
-            public void onResponse(Call<DetailMovie> call, Response<DetailMovie> response) {
-                mDetailMovie = response.body();
-            }
+        Log.v("callisnull", "hmm?");
+        try {
+            mDetailMovie = call.execute().body();
 
-            @Override
-            public void onFailure(Call<DetailMovie> call, Throwable t) {
-
-            }
-        });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.v("didit", Boolean.toString(call.isExecuted()));
+//        call.enqueue(new Callback<DetailMovie>() {
+//            @Override
+//            public void onResponse(Call<DetailMovie> call, Response<DetailMovie> response) {
+//                Log.v("insidemethod", Boolean.toString(mDetailMovie == null));
+////                mDetailMovie = new DetailMovie(response.body().getBackdropPath());
+//                mDetailMovie.setBackdropPath(response.body().getBackdropPath());
+////                mDetailMovie = response.body();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<DetailMovie> call, Throwable t) {
+//                Log.v("failincall", "here");
+//            }
+//        });
+//        Log.v("wowwew", "itdid");
     }
 
-    private void buildReviews() {
-        TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
-        Call<ReviewListModel> call = service.getMovieReview(mMovieId);
-        call.enqueue(new Callback<ReviewListModel>() {
-            @Override
-            public void onResponse(Call<ReviewListModel> call, Response<ReviewListModel> response) {
-                mDetailMovie.setReviews(response.body().results);
-            }
+//    private void buildReviews() {
+//        TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
+//        Call<ReviewListModel> call = service.getMovieReview(mMovieId);
+//        call.enqueue(new Callback<ReviewListModel>() {
+//            @Override
+//            public void onResponse(Call<ReviewListModel> call, Response<ReviewListModel> response) {
+//                mDetailMovie.setReviews(response.body().results);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ReviewListModel> call, Throwable t) {
+//
+//            }
+//        });
+//    }
 
-            @Override
-            public void onFailure(Call<ReviewListModel> call, Throwable t) {
-
-            }
-        });
-    }
-
-    private void buildTrailers() {
-        TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
-        Call<TrailerListModel> call = service.getMovieTrailers(mMovieId);
-        call.enqueue(new Callback<TrailerListModel>() {
-            @Override
-            public void onResponse(Call<TrailerListModel> call, Response<TrailerListModel> response) {
-                mDetailMovie.setTrailers(response.body().results);
-            }
-
-            @Override
-            public void onFailure(Call<TrailerListModel> call, Throwable t) {
-
-            }
-        });
-    }
-
+//    private void buildTrailers() {
+//        TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
+//        Call<TrailerListModel> call = service.getMovieTrailers(mMovieId);
+//        call.enqueue(new Callback<TrailerListModel>() {
+//            @Override
+//            public void onResponse(Call<TrailerListModel> call, Response<TrailerListModel> response) {
+//                mDetailMovie.setTrailers(response.body().results);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<TrailerListModel> call, Throwable t) {
+//
+//            }
+//        });
+//    }
+//
     public DetailMovie getMovie() {
         return mDetailMovie;
     }

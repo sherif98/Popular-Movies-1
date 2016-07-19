@@ -9,11 +9,17 @@ import android.view.ViewGroup;
 
 import com.nanodegree.udacity.android.popularmovies.R;
 
+import logic.DetailMovie;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MovieTrailersFragment extends Fragment {
 
+
+    public static MovieTrailersFragment newInstance(DetailMovie detailMovie) {
+        return new MovieTrailersFragment();
+    }
 
     public MovieTrailersFragment() {
         // Required empty public constructor

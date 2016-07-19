@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -12,21 +13,22 @@ import com.nanodegree.udacity.android.popularmovies.R;
 import com.squareup.picasso.Picasso;
 
 import adapters.MovieDetailPagerAdapter;
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import logic.DetailMovie;
 import logic.DetailMovieBuilder;
 import logic.DetailMovieFragmentController;
+import logic.TheMovieDatabaseAPI;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DisplayDetailMovieActivity extends AppCompatActivity {
     private static final String MOVIE_ID = "movie_id";
     private int movieId;
-    @BindView(R.id.movie_detail_image)
-    ImageView mImageView;
-    @BindView(R.id.movie_detail_tabs)
-    PagerSlidingTabStrip mPagerSlidingTabStrip;
-    @BindView(R.id.movie_detail_view_pager)
-    ViewPager mViewPager;
+    private ImageView mImageView;
+    private PagerSlidingTabStrip mPagerSlidingTabStrip;
+    private ViewPager mViewPager;
+
 
     public static Intent newIntent(Context context, int movieId) {
         Intent intent = new Intent(context, DisplayDetailMovieActivity.class);
@@ -38,34 +40,52 @@ public class DisplayDetailMovieActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_detail_movie);
+        mImageView = ButterKnife.findById(this, R.id.movie_detail_image);
+        mViewPager = ButterKnife.findById(this, R.id.movie_detail_view_pager);
+        mPagerSlidingTabStrip = ButterKnife.findById(this, R.id.movie_detail_tabs);
         movieId = getMovieId();
         if (!isValidId(movieId)) {
             finish();
         }
-        ButterKnife.bind(this);
         setupUI();
     }
 
     private void setupUI() {
-        DetailMovie detailMovie = buildMovie();
-        setupMovieImage(detailMovie.getBackdropPath());
-        setupViewPager(detailMovie);
+        TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
+        Call<DetailMovie> call = service.getmovieData(Integer.toString(movieId));
+        final MovieDetailPagerAdapter detailPagerAdapter = new MovieDetailPagerAdapter(getSupportFragmentManager());
+        call.enqueue(new Callback<DetailMovie>() {
+            @Override
+            public void onResponse(Call<DetailMovie> call, Response<DetailMovie> response) {
+                DetailMovie detailMovie = response.body();
+                setupMovieImage(detailMovie.getBackdropPath());
+                setupViewPager(detailMovie, detailPagerAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<DetailMovie> call, Throwable t) {
+
+            }
+        });
     }
 
     private DetailMovie buildMovie() {
         DetailMovieBuilder detailMovieBuilder = new DetailMovieBuilder(movieId);
+        Log.v("a7atanymarra", Boolean.toString(detailMovieBuilder.getMovie() == null));
         return detailMovieBuilder.getMovie();
     }
 
 
-    private void setupViewPager(DetailMovie detailMovie) {
+    private void setupViewPager(DetailMovie detailMovie, MovieDetailPagerAdapter detailPagerAdapter) {
         DetailMovieFragmentController controller = new DetailMovieFragmentController(detailMovie);
-        mViewPager.setAdapter(new MovieDetailPagerAdapter(getSupportFragmentManager(), controller));
+        detailPagerAdapter.setController(controller);
+        mViewPager.setAdapter(detailPagerAdapter);
         mPagerSlidingTabStrip.setViewPager(mViewPager);
     }
 
     private void setupMovieImage(String imageUrl) {
-        Picasso.with(this).load("http://image.tmdb.org/t/p/w500/" + imageUrl).into(mImageView);
+        Picasso.with(this).load("http://image.tmdb.org/t/p/w500/" + imageUrl)
+                .into(mImageView);
     }
 
     private boolean isValidId(int movieId) {
