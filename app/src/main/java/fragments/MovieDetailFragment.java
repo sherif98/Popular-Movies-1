@@ -3,6 +3,7 @@ package fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +14,13 @@ import android.widget.TextView;
 import com.nanodegree.udacity.android.popularmovies.R;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
+import java.util.List;
+
+import adapters.MoviesGenreAdapter;
 import butterknife.ButterKnife;
 import logic.DetailMovie;
+import logic.Genre;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,12 +42,12 @@ public class MovieDetailFragment extends Fragment {
 
     private static Bundle createArguments(DetailMovie detailMovie) {
         Bundle args = new Bundle();
-//        args.putString(MOVIE_TITLE, detailMovie.getTitle());
-        args.putString(MOVIE_POSTER, detailMovie.getBackdropPath());
-//        args.putString(MOVIE_VOTE, Integer.toString(detailMovie.getVoteAverage()));
-//        args.putString(MOVIE_DATE, detailMovie.getReleaseDate());
-//        args.putString(MOVIE_OVERVIEW, detailMovie.getOverview());
-//        args.putStringArray(MOVIE_GENRES, detailMovie.getGenreList().toArray(new String[0]));
+        args.putString(MOVIE_TITLE, detailMovie.getTitle());
+        args.putString(MOVIE_POSTER, detailMovie.getPosterPath());
+        args.putString(MOVIE_VOTE, Double.toString(detailMovie.getVoteAverage()));
+        args.putString(MOVIE_DATE, detailMovie.getReleaseDate());
+        args.putString(MOVIE_OVERVIEW, detailMovie.getOverview());
+        args.putSerializable(MOVIE_GENRES, (Serializable) detailMovie.getGenreList());
         return args;
     }
 
@@ -67,28 +73,15 @@ public class MovieDetailFragment extends Fragment {
         setupMovieDate(args.getString(MOVIE_DATE), rootView);
         setupMovieVote(args.getString(MOVIE_VOTE), rootView);
         setupMovieOverview(args.getString(MOVIE_OVERVIEW), rootView);
-//        setupGenres(args.getStringArray(MOVIE_GENRES), rootView);
+        setupGenres((List<Genre>) args.getSerializable(MOVIE_GENRES), rootView);
     }
 
-    private void setupGenres(String[] genres) {
-        RecyclerView recyclerView = ButterKnife.findById(getActivity(),
+    private void setupGenres(List<Genre> genres, View rootView) {
+        RecyclerView recyclerView = ButterKnife.findById(rootView,
                 R.id.movie_detail_genres_recycler_view);
-        recyclerView.setAdapter(new RecyclerView.Adapter() {
-            @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return null;
-            }
-
-            @Override
-            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-            }
-
-            @Override
-            public int getItemCount() {
-                return 0;
-            }
-        });
+        recyclerView.setAdapter(new MoviesGenreAdapter(genres));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
+                LinearLayoutManager.HORIZONTAL, false));
 
     }
 

@@ -3,7 +3,6 @@ package logic;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.List;
 
 import retrofit2.Call;
 
@@ -87,10 +86,4 @@ public class DetailMovieBuilder {
 
 }
 
-class TrailerListModel {
-    List<Trailer> results;
-}
 
-class ReviewListModel {
-    List<Review> results;
-}

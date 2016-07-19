@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -15,7 +14,6 @@ import com.squareup.picasso.Picasso;
 import adapters.MovieDetailPagerAdapter;
 import butterknife.ButterKnife;
 import logic.DetailMovie;
-import logic.DetailMovieBuilder;
 import logic.DetailMovieFragmentController;
 import logic.TheMovieDatabaseAPI;
 import retrofit2.Call;
@@ -53,7 +51,8 @@ public class DisplayDetailMovieActivity extends AppCompatActivity {
     private void setupUI() {
         TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
         Call<DetailMovie> call = service.getmovieData(Integer.toString(movieId));
-        final MovieDetailPagerAdapter detailPagerAdapter = new MovieDetailPagerAdapter(getSupportFragmentManager());
+        final MovieDetailPagerAdapter detailPagerAdapter =
+                new MovieDetailPagerAdapter(getSupportFragmentManager());
         call.enqueue(new Callback<DetailMovie>() {
             @Override
             public void onResponse(Call<DetailMovie> call, Response<DetailMovie> response) {
@@ -67,12 +66,6 @@ public class DisplayDetailMovieActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private DetailMovie buildMovie() {
-        DetailMovieBuilder detailMovieBuilder = new DetailMovieBuilder(movieId);
-        Log.v("a7atanymarra", Boolean.toString(detailMovieBuilder.getMovie() == null));
-        return detailMovieBuilder.getMovie();
     }
 
 

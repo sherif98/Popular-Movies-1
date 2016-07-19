@@ -3,28 +3,35 @@ package fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.nanodegree.udacity.android.popularmovies.R;
 
-import butterknife.ButterKnife;
+import adapters.MovieReviewAdapter;
 import logic.DetailMovie;
+import logic.ReviewListModel;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MovieReviewsFragment extends Fragment {
-
+    private static final String REVIEWS = "reviews";
 
     public static MovieReviewsFragment newInstance(DetailMovie detailMovie) {
         MovieReviewsFragment fragment = new MovieReviewsFragment();
-        Bundle args = new Bundle();
-        args.putString("yeah", detailMovie.getBackdropPath());
+        Bundle args = createArguments(detailMovie);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private static Bundle createArguments(DetailMovie detailMovie) {
+        Bundle args = new Bundle();
+        args.putSerializable(REVIEWS, detailMovie.getReviews());
+        return args;
     }
 
     public MovieReviewsFragment() {
@@ -36,10 +43,14 @@ public class MovieReviewsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_movie_reviews, container, false);
-        TextView textView = ButterKnife.findById(rootView, R.id.yeah);
-        textView.setText(getArguments().getString("yeah"));
-        return rootView;
+        RecyclerView recyclerView = (RecyclerView)
+                inflater.inflate(R.layout.fragment_movie_reviews, container, false);
+        ReviewListModel reviewListModel = (ReviewListModel) getArguments().getSerializable(REVIEWS);
+        if (reviewListModel != null) {
+            MovieReviewAdapter adapter = new MovieReviewAdapter(reviewListModel.results);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
+        return recyclerView;
     }
-
 }

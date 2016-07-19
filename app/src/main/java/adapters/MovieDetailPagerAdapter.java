@@ -30,6 +30,6 @@ public class MovieDetailPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return detailType[0];
+        return detailType[position];
     }
 }
