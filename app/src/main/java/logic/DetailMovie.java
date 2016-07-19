@@ -24,6 +24,12 @@ public class DetailMovie {
     private double mVoteAverage;
     @SerializedName("reviews")
     private ReviewListModel mReviews;
+    @SerializedName("trailers")
+    private TrailerListModel mTrailers;
+
+    public TrailerListModel getTrailers() {
+        return mTrailers;
+    }
 
     public String getBackdropPath() {
         return mBackdropPath;

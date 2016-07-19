@@ -1,7 +1,10 @@
 package logic;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class TrailerListModel {
-    public List<Trailer> results;
+    @SerializedName("youtube")
+    public List<Trailer> mTrailers;
 }
