@@ -9,9 +9,14 @@ import android.widget.ImageView;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.nanodegree.udacity.android.popularmovies.R;
+import com.squareup.picasso.Picasso;
 
+import adapters.MovieDetailPagerAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import logic.DetailMovie;
+import logic.DetailMovieBuilder;
+import logic.DetailMovieFragmentController;
 
 public class DisplayDetailMovieActivity extends AppCompatActivity {
     private static final String MOVIE_ID = "movie_id";
@@ -42,20 +47,25 @@ public class DisplayDetailMovieActivity extends AppCompatActivity {
     }
 
     private void setupUI() {
-        makeAPICAll();
-        setupMovieImage();
-        setupViewPager();
+        DetailMovie detailMovie = buildMovie();
+        setupMovieImage(detailMovie.getBackdropPath());
+        setupViewPager(detailMovie);
     }
 
-    private void makeAPICAll() {
-        
+    private DetailMovie buildMovie() {
+        DetailMovieBuilder detailMovieBuilder = new DetailMovieBuilder(movieId);
+        return detailMovieBuilder.getMovie();
     }
 
-    private void setupViewPager() {
+
+    private void setupViewPager(DetailMovie detailMovie) {
+        DetailMovieFragmentController controller = new DetailMovieFragmentController(detailMovie);
+        mViewPager.setAdapter(new MovieDetailPagerAdapter(getSupportFragmentManager(), controller));
+        mPagerSlidingTabStrip.setViewPager(mViewPager);
     }
 
-    private void setupMovieImage() {
-
+    private void setupMovieImage(String imageUrl) {
+        Picasso.with(this).load("http://image.tmdb.org/t/p/w500/" + imageUrl).into(mImageView);
     }
 
     private boolean isValidId(int movieId) {

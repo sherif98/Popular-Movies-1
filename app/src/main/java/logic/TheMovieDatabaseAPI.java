@@ -1,7 +1,6 @@
 package logic;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
@@ -36,20 +35,20 @@ public interface TheMovieDatabaseAPI {
      * use it to get details about a movie given the id (movie name, pictures, overview, etc..)
      */
     @GET("/3/movie/{id}" + RETROFIT_API_KEY)
-    Callback<DetailMovie> getmovieData(@Path("id") String id);
+    Call<DetailMovie> getmovieData(@Path("id") String id);
 
     /*
      * use it to get reviews of a movie given its id
      */
     @GET("/3/movie/{id}/reviews" + RETROFIT_API_KEY)
-    Callback<ReviewListModel> getMovieReview(@Path("id") String id);
+    Call<ReviewListModel> getMovieReview(@Path("id") String id);
 
 
     /*
      * use it to get trailers of a movie givenn its id
      */
     @GET("/3/movie/{id}/videos" + RETROFIT_API_KEY)
-    Callback<TrailerListModel> getMovieTrailers(@Path("id") String id);
+    Call<TrailerListModel> getMovieTrailers(@Path("id") String id);
 
 
 }

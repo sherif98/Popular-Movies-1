@@ -23,6 +23,10 @@ public class DetailMovie {
     @SerializedName("vote_average")
     private int mVoteAverage;
 
+    private List<Trailer> mTrailers;
+    private List<Review> mReviews;
+
+
     public DetailMovie(String backdropPath, List<Genre> genreList, int id,
                        String title, String overview, String poSterPath,
                        String releaseDate, int voteAverage) {
@@ -66,5 +70,21 @@ public class DetailMovie {
 
     public int getVoteAverage() {
         return mVoteAverage;
+    }
+
+    public List<Review> getReviews() {
+        return mReviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        mReviews = reviews;
+    }
+
+    public List<Trailer> getTrailers() {
+        return mTrailers;
+    }
+
+    public void setTrailers(List<Trailer> trailers) {
+        mTrailers = trailers;
     }
 }
