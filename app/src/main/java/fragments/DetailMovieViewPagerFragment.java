@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.nanodegree.udacity.android.popularmovies.R;
@@ -69,7 +70,6 @@ public class DetailMovieViewPagerFragment extends Fragment {
         Call<DetailMovie> call = service.getmovieData(movieId);
         final MovieDetailPagerAdapter detailPagerAdapter =
                 new MovieDetailPagerAdapter(getChildFragmentManager());
-        //TODO is it working ?? not support fragment manager
         call.enqueue(new Callback<DetailMovie>() {
             @Override
             public void onResponse(Call<DetailMovie> call, Response<DetailMovie> response) {
@@ -79,7 +79,7 @@ public class DetailMovieViewPagerFragment extends Fragment {
 
             @Override
             public void onFailure(Call<DetailMovie> call, Throwable t) {
-
+                Toast.makeText(getActivity(), "Connect Problem", Toast.LENGTH_SHORT).show();
             }
         });
     }
