@@ -74,12 +74,6 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
                 mTrailerClickListener.onTrailerClicked(trailer.getVideoKey());
             }
         });
-        holder.mTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mTrailerClickListener.onTrailerClicked(trailer.getVideoKey());
-            }
-        });
     }
 
     @Override

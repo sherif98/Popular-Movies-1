@@ -32,6 +32,7 @@ public class MovieDetailFragment extends Fragment {
     private static final String MOVIE_DATE = "date";
     private static final String MOVIE_OVERVIEW = "overview";
     private static final String MOVIE_GENRES = "genres";
+    private static final String MOVIE_BACKDROP = "back_drop";
 
     public static MovieDetailFragment newInstance(DetailMovie detailMovie) {
         MovieDetailFragment fragment = new MovieDetailFragment();
@@ -47,6 +48,7 @@ public class MovieDetailFragment extends Fragment {
         args.putString(MOVIE_VOTE, Double.toString(detailMovie.getVoteAverage()));
         args.putString(MOVIE_DATE, detailMovie.getReleaseDate());
         args.putString(MOVIE_OVERVIEW, detailMovie.getOverview());
+        args.putString(MOVIE_BACKDROP, detailMovie.getBackdropPath());
         args.putSerializable(MOVIE_GENRES, (Serializable) detailMovie.getGenreList());
         return args;
     }
@@ -68,12 +70,19 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void setupUI(Bundle args, View rootView) {
+        setupBackdropPath(args.getString(MOVIE_BACKDROP), rootView);
         setupMovieTitle(args.getString(MOVIE_TITLE), rootView);
         setupMoviePoster(args.getString(MOVIE_POSTER), rootView);
         setupMovieDate(args.getString(MOVIE_DATE), rootView);
         setupMovieVote(args.getString(MOVIE_VOTE), rootView);
         setupMovieOverview(args.getString(MOVIE_OVERVIEW), rootView);
         setupGenres((List<Genre>) args.getSerializable(MOVIE_GENRES), rootView);
+    }
+
+    private void setupBackdropPath(String imageUrl, View rootView) {
+        ImageView imageView = ButterKnife.findById(rootView, R.id.movie_detail_image);
+        Picasso.with(imageView.getContext()).load("http://image.tmdb.org/t/p/w500/" + imageUrl)
+                .into(imageView);
     }
 
     private void setupGenres(List<Genre> genres, View rootView) {

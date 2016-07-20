@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,7 +91,12 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     }
 
     private void setupRecyclerView() {
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        if (getActivity().findViewById(R.id.movie_detail_tablet_container) == null) {
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        } else {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
+
         int requestNumber = getRequestNumber();
         attachAdapter(requestNumber);
     }
