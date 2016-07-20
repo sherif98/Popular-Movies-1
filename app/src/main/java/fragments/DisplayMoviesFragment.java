@@ -6,13 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
-import android.widget.Toast;
 
 import com.nanodegree.udacity.android.popularmovies.R;
 
@@ -91,11 +89,11 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     }
 
     private void setupRecyclerView() {
-        if (getActivity().findViewById(R.id.movie_detail_tablet_container) == null) {
+//        if (getActivity().findViewById(R.id.movie_detail_tablet_container) == null) {
             recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        } else {
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        }
+//        } else {
+//            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+//        }
 
         int requestNumber = getRequestNumber();
         attachAdapter(requestNumber);
@@ -122,7 +120,7 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
 
             @Override
             public void onFailure(Call<MovieListModel> call, Throwable t) {
-                Toast.makeText(getActivity(), "Connect Problem", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "Connect Problem", Toast.LENGTH_SHORT).show();
             }
         });
     }

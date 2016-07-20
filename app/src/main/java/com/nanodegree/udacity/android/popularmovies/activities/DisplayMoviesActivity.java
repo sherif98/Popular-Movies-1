@@ -29,7 +29,7 @@ public class DisplayMoviesActivity extends AppCompatActivity implements DisplayM
 
     @Override
     public void onMovieClicked(Movie movie) {
-        if (findViewById(R.id.movie_detail_tablet_container) == null) {
+        if (!tabletUIRunning()) {
             Intent intent = DisplayDetailMovieActivity.newIntent(this, movie.getId());
             startActivity(intent);
         } else {
@@ -38,5 +38,9 @@ public class DisplayMoviesActivity extends AppCompatActivity implements DisplayM
                     .replace(R.id.movie_detail_tablet_container, fragment)
                     .commit();
         }
+    }
+
+    private boolean tabletUIRunning() {
+        return (findViewById(R.id.movie_detail_tablet_container) != null);
     }
 }

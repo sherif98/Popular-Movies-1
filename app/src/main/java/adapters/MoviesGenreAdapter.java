@@ -24,6 +24,7 @@ public class MoviesGenreAdapter extends RecyclerView.Adapter<MoviesGenreAdapter.
     public static class GenreHolder extends RecyclerView.ViewHolder {
         TextView mTextView;
 
+        //TODO add custom view for the genres instead of textview
         public GenreHolder(View itemView) {
             super(itemView);
             mTextView = ButterKnife.findById(itemView, R.id.movie_detail_genre_view);

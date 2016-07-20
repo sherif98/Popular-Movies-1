@@ -7,7 +7,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.nanodegree.udacity.android.popularmovies.R;
@@ -79,7 +78,7 @@ public class DetailMovieViewPagerFragment extends Fragment {
 
             @Override
             public void onFailure(Call<DetailMovie> call, Throwable t) {
-                Toast.makeText(getActivity(), "Connect Problem", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "Connect Problem", Toast.LENGTH_SHORT).show();
             }
         });
     }
