@@ -67,13 +67,19 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
     @Override
     public void onBindViewHolder(final TrailerHolder holder, int position) {
         final Trailer trailer = mTrailers.get(position);
+        holder.bindTrailer(trailer);
         holder.mYouTubeThumbnailView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mTrailerClickListener.onTrailerClicked(trailer.getVideoKey());
             }
         });
-        holder.bindTrailer(trailer);
+        holder.mTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mTrailerClickListener.onTrailerClicked(trailer.getVideoKey());
+            }
+        });
     }
 
     @Override

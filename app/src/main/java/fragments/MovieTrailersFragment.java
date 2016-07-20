@@ -1,6 +1,7 @@
 package fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,13 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.nanodegree.udacity.android.popularmovies.R;
+import com.nanodegree.udacity.android.popularmovies.activities.YoutubeActivity;
 
-import java.io.Serializable;
 import java.util.List;
 
 import adapters.MovieTrailerAdapter;
 import logic.DetailMovie;
 import logic.Trailer;
+import logic.TrailerListModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,7 +36,7 @@ public class MovieTrailersFragment extends Fragment implements MovieTrailerAdapt
     private static Bundle getArgument(DetailMovie detailMovie) {
         Bundle args = new Bundle();
         List<Trailer> trailers = detailMovie.getTrailers().mTrailers;
-        args.putSerializable(TRAILERS, (Serializable) trailers);
+        args.putSerializable(TRAILERS, detailMovie.getTrailers());
         return args;
     }
 
@@ -58,11 +60,16 @@ public class MovieTrailersFragment extends Fragment implements MovieTrailerAdapt
 
     private List<Trailer> getTrailerList() {
         Bundle args = getArguments();
-        return (List<Trailer>) args.getSerializable(TRAILERS);
+        TrailerListModel trailerListModel = (TrailerListModel) args.getSerializable(TRAILERS);
+        if (trailerListModel != null) {
+            return trailerListModel.mTrailers;
+        }
+        return null;
     }
 
     @Override
     public void onTrailerClicked(String link) {
-
+        Intent intent = YoutubeActivity.newIntent(getActivity(), link);
+        startActivity(intent);
     }
 }
