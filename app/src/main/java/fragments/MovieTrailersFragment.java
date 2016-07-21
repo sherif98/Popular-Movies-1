@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.nanodegree.udacity.android.popularmovies.R;
 import com.nanodegree.udacity.android.popularmovies.activities.YoutubeActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import adapters.MovieTrailerAdapter;
@@ -36,6 +37,9 @@ public class MovieTrailersFragment extends Fragment implements MovieTrailerAdapt
     private static Bundle getArgument(DetailMovie detailMovie) {
         Bundle args = new Bundle();
         List<Trailer> trailers = detailMovie.getTrailers().mTrailers;
+        if(trailers == null){
+            trailers = new ArrayList<>();
+        }
         args.putSerializable(TRAILERS, detailMovie.getTrailers());
         return args;
     }
@@ -52,6 +56,9 @@ public class MovieTrailersFragment extends Fragment implements MovieTrailerAdapt
         RecyclerView recyclerView = (RecyclerView) inflater
                 .inflate(R.layout.fragment_movie_trailers, container, false);
         List<Trailer> trailers = getTrailerList();
+        if(trailers == null){
+            trailers = new ArrayList<>();
+        }
         MovieTrailerAdapter adapter = new MovieTrailerAdapter(trailers, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

@@ -1,8 +1,11 @@
 package logic;
 
 
+import android.graphics.Bitmap;
+
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DetailMovie {
@@ -17,7 +20,7 @@ public class DetailMovie {
     @SerializedName("overview")
     private String mOverview;
     @SerializedName("poster_path")
-    private String mPoSterPath;
+    private String mPosterPath;
     @SerializedName("release_date")
     private String mReleaseDate;
     @SerializedName("vote_average")
@@ -26,6 +29,46 @@ public class DetailMovie {
     private ReviewListModel mReviews;
     @SerializedName("trailers")
     private TrailerListModel mTrailers;
+    private Bitmap mPosterBitmap;
+    private Bitmap mBackDropBitmap;
+
+    public DetailMovie(String backdropPath, List<Genre> genreList, int id, String title,
+                       String overview, String poSterPath, String releaseDate,
+                       double voteAverage, ReviewListModel reviews, TrailerListModel trailers) {
+        mBackdropPath = backdropPath;
+        mGenreList = genreList;
+        mId = id;
+        mTitle = title;
+        mOverview = overview;
+        mPosterPath = poSterPath;
+        mReleaseDate = releaseDate;
+        mVoteAverage = voteAverage;
+        mReviews = reviews;
+        mTrailers = trailers;
+    }
+
+    //constructor used by the SQLite database
+    public DetailMovie(int id, String title, String overview,
+                       String releaseDate, double voteAverage,
+                       Bitmap posterBitmap, Bitmap backDropBitmap) {
+        this.mId = id;
+        mTitle = title;
+        mOverview = overview;
+        mReleaseDate = releaseDate;
+        mVoteAverage = voteAverage;
+        mPosterBitmap = posterBitmap;
+        mBackDropBitmap = backDropBitmap;
+        mGenreList = new ArrayList<>();
+        mTrailers = new TrailerListModel();
+    }
+
+    public Bitmap getBackDropBitmap() {
+        return mBackDropBitmap;
+    }
+
+    public Bitmap getPosterBitmap() {
+        return mPosterBitmap;
+    }
 
     public TrailerListModel getTrailers() {
         return mTrailers;
@@ -52,7 +95,7 @@ public class DetailMovie {
     }
 
     public String getPosterPath() {
-        return mPoSterPath;
+        return mPosterPath;
     }
 
     public String getReleaseDate() {

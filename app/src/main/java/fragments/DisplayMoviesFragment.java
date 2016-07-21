@@ -14,7 +14,10 @@ import android.view.animation.OvershootInterpolator;
 
 import com.nanodegree.udacity.android.popularmovies.R;
 
+import java.util.List;
+
 import adapters.MoviesCardsAdapter;
+import database.MovieDatabaseManager;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import logic.Movie;
 import logic.MovieListModel;
@@ -29,14 +32,16 @@ import retrofit2.Response;
 public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapter.MovieClickListener {
     private static final String TAG = DisplayMoviesFragment.class.getSimpleName();
     private final static String REQUEST_NUMBER = "request";
+    private static final int FAVORITES_REQUSET_NUMBER = 4;
     private RecyclerView recyclerView;
     private CallBacks mCallbacks;
+    private boolean isFavorite;
 
     /*
      * an interface to be implemented by the hosting activity
      */
     public interface CallBacks {
-        void onMovieClicked(Movie movie);
+        void onMovieClicked(Movie movie, boolean isFavorite);
     }
 
 
@@ -101,6 +106,16 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
 
 
     private void attachAdapter(int requestNumber) {
+        if (requestNumber == FAVORITES_REQUSET_NUMBER) {
+            isFavorite = true;
+            setupFavoriteMoviesFragment();
+        } else {
+            isFavorite = false;
+            setupOnlineRequestFragments(requestNumber);
+        }
+    }
+
+    private void setupOnlineRequestFragments(int requestNumber) {
         TheMovieDatabaseAPI.RequestType requestType = getCorrespondingRequestType(requestNumber);
         TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
         Call<MovieListModel> call = service.getMoviesList(requestType.toString().toLowerCase());
@@ -120,6 +135,13 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
         });
     }
 
+    private void setupFavoriteMoviesFragment() {
+        MovieDatabaseManager movieDatabaseManager = MovieDatabaseManager.getInstance(getContext());
+        List<Movie> movies = movieDatabaseManager.getMovies();
+        MoviesCardsAdapter moviesCardsAdapter = new MoviesCardsAdapter(movies, DisplayMoviesFragment.this);
+        recyclerView.setAdapter(moviesCardsAdapter);
+    }
+
 
     private TheMovieDatabaseAPI.RequestType getCorrespondingRequestType(int requestNumber) {
         TheMovieDatabaseAPI.RequestType types[] = TheMovieDatabaseAPI.RequestType.values();
@@ -128,6 +150,6 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
 
     @Override
     public void onClickMovie(Movie movie) {
-        mCallbacks.onMovieClicked(movie);
+        mCallbacks.onMovieClicked(movie, isFavorite);
     }
 }

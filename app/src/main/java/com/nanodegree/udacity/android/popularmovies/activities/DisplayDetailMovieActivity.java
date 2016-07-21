@@ -13,11 +13,12 @@ import fragments.DetailMovieViewPagerFragment;
 
 public class DisplayDetailMovieActivity extends AppCompatActivity {
     private static final String MOVIE_ID = "movie_id";
+    private static final String FAVORITE_FLAG = "favorite";
 
-
-    public static Intent newIntent(Context context, int movieId) {
+    public static Intent newIntent(Context context, int movieId, boolean isFavorite) {
         Intent intent = new Intent(context, DisplayDetailMovieActivity.class);
         intent.putExtra(MOVIE_ID, movieId);
+        intent.putExtra(FAVORITE_FLAG, isFavorite);
         return intent;
     }
 
@@ -28,10 +29,15 @@ public class DisplayDetailMovieActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.movie_detail_fragment_container);
         if (fragment == null) {
-            fragment = DetailMovieViewPagerFragment.newInstance(getMovieId());
+            fragment = DetailMovieViewPagerFragment.newInstance(getMovieId(), getFavoriteFlag());
             fragmentManager.beginTransaction().add(R.id.movie_detail_fragment_container,
                     fragment).commit();
         }
+    }
+
+    private boolean getFavoriteFlag() {
+        Intent intent = getIntent();
+        return intent.getBooleanExtra(FAVORITE_FLAG, false);
     }
 
     private int getMovieId() {

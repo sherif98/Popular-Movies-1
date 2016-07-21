@@ -1,13 +1,17 @@
 package fragments;
 
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +23,8 @@ import java.util.List;
 
 import adapters.MoviesGenreAdapter;
 import butterknife.ButterKnife;
+import database.DatabaseBitmapUtility;
+import database.MovieDatabaseManager;
 import logic.DetailMovie;
 import logic.Genre;
 
@@ -26,6 +32,7 @@ import logic.Genre;
  * A simple {@link Fragment} subclass.
  */
 public class MovieDetailFragment extends Fragment {
+    private static final String MOVIE_ID = "id";
     private static final String MOVIE_TITLE = "title";
     private static final String MOVIE_POSTER = "poster";
     private static final String MOVIE_VOTE = "vote";
@@ -33,6 +40,10 @@ public class MovieDetailFragment extends Fragment {
     private static final String MOVIE_OVERVIEW = "overview";
     private static final String MOVIE_GENRES = "genres";
     private static final String MOVIE_BACKDROP = "back_drop";
+    private static final String MOVIE_POSTER_BITMAP = "poster_bitmap";
+    private static final String MOVIE_BACKDROP_BITMAP = "back_bitmap";
+    private ImageView mPosterImageView;
+    private ImageView mBackDropImage;
 
     public static MovieDetailFragment newInstance(DetailMovie detailMovie) {
         MovieDetailFragment fragment = new MovieDetailFragment();
@@ -43,6 +54,7 @@ public class MovieDetailFragment extends Fragment {
 
     private static Bundle createArguments(DetailMovie detailMovie) {
         Bundle args = new Bundle();
+        args.putInt(MOVIE_ID, detailMovie.getId());
         args.putString(MOVIE_TITLE, detailMovie.getTitle());
         args.putString(MOVIE_POSTER, detailMovie.getPosterPath());
         args.putString(MOVIE_VOTE, Double.toString(detailMovie.getVoteAverage()));
@@ -50,6 +62,15 @@ public class MovieDetailFragment extends Fragment {
         args.putString(MOVIE_OVERVIEW, detailMovie.getOverview());
         args.putString(MOVIE_BACKDROP, detailMovie.getBackdropPath());
         args.putSerializable(MOVIE_GENRES, (Serializable) detailMovie.getGenreList());
+        if (detailMovie.getPosterBitmap() != null) {
+            args.putByteArray(MOVIE_POSTER_BITMAP,
+                    DatabaseBitmapUtility.getBytes(detailMovie.getPosterBitmap()));
+        }
+        if (detailMovie.getBackDropBitmap() != null) {
+            args.putByteArray(MOVIE_BACKDROP_BITMAP,
+                    DatabaseBitmapUtility.getBytes(detailMovie.getBackDropBitmap()));
+        }
+
         return args;
     }
 
@@ -66,23 +87,95 @@ public class MovieDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         Bundle args = getArguments();
         setupUI(args, rootView);
+        setupAddToFavoriteButton(rootView);
         return rootView;
     }
 
+    private void setupAddToFavoriteButton(View rootView) {
+        Button button = ButterKnife.findById(rootView, R.id.movie_detail_add_favorites_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MovieDatabaseManager manager = MovieDatabaseManager.getInstance(getContext());
+                DetailMovie movie = getCurrentDisplayedMovie();
+                manager.addMovie(movie);
+            }
+        });
+    }
+
+    private DetailMovie getCurrentDisplayedMovie() {
+        Bundle args = getArguments();
+        int id = getMovieId(args);
+        String title = getMovieTitleData(args);
+        String overview = getMovieOverviewData(args);
+        String vote = getMovieVoteData(args);
+        String date = getMovieReleaseDateData(args);
+        Bitmap poster = getMoviePosterBitmap();
+        Bitmap backDrop = getMovieBackDropBitmap();
+        Log.v("titleisfrag", title);
+        return new DetailMovie(id, title, overview, date, Double.parseDouble(vote), poster, backDrop);
+    }
+
+    private int getMovieId(Bundle args) {
+        return args.getInt(MOVIE_ID);
+    }
+
+    private Bitmap getMovieBackDropBitmap() {
+        return ((BitmapDrawable) mBackDropImage.getDrawable()).getBitmap();
+    }
+
+    private Bitmap getMoviePosterBitmap() {
+        return ((BitmapDrawable) mPosterImageView.getDrawable()).getBitmap();
+    }
+
     private void setupUI(Bundle args, View rootView) {
-        setupBackdropPath(args.getString(MOVIE_BACKDROP), rootView);
-        setupMovieTitle(args.getString(MOVIE_TITLE), rootView);
-        setupMoviePoster(args.getString(MOVIE_POSTER), rootView);
-        setupMovieDate(args.getString(MOVIE_DATE), rootView);
-        setupMovieVote(args.getString(MOVIE_VOTE), rootView);
-        setupMovieOverview(args.getString(MOVIE_OVERVIEW), rootView);
-        setupGenres((List<Genre>) args.getSerializable(MOVIE_GENRES), rootView);
+        setupBackdropPath(getMovieBackDropPathData(args), rootView);
+        setupMovieTitle(getMovieTitleData(args), rootView);
+        setupMoviePoster(getMoviePosterData(args), rootView);
+        setupMovieDate(getMovieReleaseDateData(args), rootView);
+        setupMovieVote(getMovieVoteData(args), rootView);
+        setupMovieOverview(getMovieOverviewData(args), rootView);
+        setupGenres(getMovieGenreData(args), rootView);
+    }
+
+    private String getMoviePosterData(Bundle args) {
+        return args.getString(MOVIE_POSTER);
+    }
+
+    private String getMovieTitleData(Bundle args) {
+        return args.getString(MOVIE_TITLE);
+    }
+
+    private String getMovieBackDropPathData(Bundle args) {
+        return args.getString(MOVIE_BACKDROP);
+    }
+
+    private String getMovieReleaseDateData(Bundle args) {
+        return args.getString(MOVIE_DATE);
+    }
+
+    private String getMovieVoteData(Bundle args) {
+        return args.getString(MOVIE_VOTE);
+    }
+
+    private String getMovieOverviewData(Bundle args) {
+        return args.getString(MOVIE_OVERVIEW);
+    }
+
+    private List<Genre> getMovieGenreData(Bundle args) {
+        return (List<Genre>) args.getSerializable(MOVIE_GENRES);
     }
 
     private void setupBackdropPath(String imageUrl, View rootView) {
-        ImageView imageView = ButterKnife.findById(rootView, R.id.movie_detail_image);
-        Picasso.with(imageView.getContext()).load("http://image.tmdb.org/t/p/w500/" + imageUrl)
-                .into(imageView);
+        mBackDropImage = ButterKnife.findById(rootView, R.id.movie_detail_image);
+        if (imageUrl != null) {
+            Picasso.with(mBackDropImage.getContext()).load("http://image.tmdb.org/t/p/w500/" + imageUrl)
+                    .into(mBackDropImage);
+        } else {
+            mBackDropImage.setImageBitmap(DatabaseBitmapUtility.getImage(
+                    getArguments().getByteArray(MOVIE_BACKDROP_BITMAP)));
+        }
+
     }
 
     private void setupGenres(List<Genre> genres, View rootView) {
@@ -110,15 +203,18 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void setupMoviePoster(String url, View rootView) {
-        ImageView imageView = ButterKnife.findById(rootView, R.id.movie_detil_poster);
-        Picasso.with(imageView.getContext()).load("http://image.tmdb.org/t/p/w500/" + url)
-                .into(imageView);
+        mPosterImageView = ButterKnife.findById(rootView, R.id.movie_detil_poster);
+        if(url != null){
+            Picasso.with(mPosterImageView.getContext()).load("http://image.tmdb.org/t/p/w500/" + url)
+                    .into(mPosterImageView);
+        }else{
+            mPosterImageView.setImageBitmap(
+                    DatabaseBitmapUtility.getImage(getArguments().getByteArray(MOVIE_POSTER_BITMAP)));
+        }
     }
 
     private void setupMovieTitle(String title, View rootView) {
         TextView textView = ButterKnife.findById(rootView, R.id.movie_detail_title);
         textView.setText(title);
     }
-
-
 }

@@ -28,12 +28,12 @@ public class DisplayMoviesActivity extends AppCompatActivity implements DisplayM
     }
 
     @Override
-    public void onMovieClicked(Movie movie) {
+    public void onMovieClicked(Movie movie, boolean isFavorite) {
         if (!tabletUIRunning()) {
-            Intent intent = DisplayDetailMovieActivity.newIntent(this, movie.getId());
+            Intent intent = DisplayDetailMovieActivity.newIntent(this, movie.getId(), isFavorite);
             startActivity(intent);
         } else {
-            Fragment fragment = DetailMovieViewPagerFragment.newInstance(movie.getId());
+            Fragment fragment = DetailMovieViewPagerFragment.newInstance(movie.getId(), isFavorite);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movie_detail_tablet_container, fragment)
                     .commit();

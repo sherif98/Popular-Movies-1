@@ -13,6 +13,7 @@ import com.nanodegree.udacity.android.popularmovies.R;
 
 import adapters.MovieDetailPagerAdapter;
 import butterknife.ButterKnife;
+import database.MovieDatabaseManager;
 import logic.DetailMovie;
 import logic.DetailMovieFragmentController;
 import logic.TheMovieDatabaseAPI;
@@ -26,20 +27,23 @@ import retrofit2.Response;
 public class DetailMovieViewPagerFragment extends Fragment {
 
     private static final String MOVIE_ID = "movie_id";
+    private static final String FAVORITE_FLAG = "favorite";
     private String movieId;
+    private boolean isFavorite;
     private PagerSlidingTabStrip mPagerSlidingTabStrip;
     private ViewPager mViewPager;
 
-    public static DetailMovieViewPagerFragment newInstance(int movieId) {
+    public static DetailMovieViewPagerFragment newInstance(int movieId, boolean isFavorite) {
         DetailMovieViewPagerFragment fragment = new DetailMovieViewPagerFragment();
-        Bundle args = createArguments(movieId);
+        Bundle args = createArguments(movieId, isFavorite);
         fragment.setArguments(args);
         return fragment;
     }
 
-    private static Bundle createArguments(int movieId) {
+    private static Bundle createArguments(int movieId, boolean isFavorite) {
         Bundle args = new Bundle();
         args.putString(MOVIE_ID, Integer.toString(movieId));
+        args.putBoolean(FAVORITE_FLAG, isFavorite);
         return args;
     }
 
@@ -57,6 +61,7 @@ public class DetailMovieViewPagerFragment extends Fragment {
         mViewPager = ButterKnife.findById(view, R.id.movie_detail_view_pager);
         mPagerSlidingTabStrip = ButterKnife.findById(view, R.id.movie_detail_tabs);
         movieId = getMovieId();
+        isFavorite = getFavoriteFlag();
         if (!isValidId(movieId)) {
             getActivity().finish();
         }
@@ -64,7 +69,16 @@ public class DetailMovieViewPagerFragment extends Fragment {
         return view;
     }
 
+
     private void setupUI() {
+        if (isFavorite) {
+            setupUIFfomDatabase();
+        } else {
+            setupUIFromAPICall();
+        }
+    }
+
+    private void setupUIFromAPICall() {
         TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
         Call<DetailMovie> call = service.getmovieData(movieId);
         final MovieDetailPagerAdapter detailPagerAdapter =
@@ -83,6 +97,19 @@ public class DetailMovieViewPagerFragment extends Fragment {
         });
     }
 
+    private void setupUIFfomDatabase() {
+        DetailMovie movie = getDetailMovieFromDatabase();
+        MovieDetailPagerAdapter detailPagerAdapter =
+                new MovieDetailPagerAdapter(getChildFragmentManager());
+        setupViewPager(movie, detailPagerAdapter);
+    }
+
+
+    private DetailMovie getDetailMovieFromDatabase() {
+        MovieDatabaseManager manager = MovieDatabaseManager.getInstance(getContext());
+        return manager.getDetailMovie(Integer.parseInt(movieId));
+    }
+
     private void setupViewPager(DetailMovie detailMovie, MovieDetailPagerAdapter detailPagerAdapter) {
         DetailMovieFragmentController controller = new DetailMovieFragmentController(detailMovie);
         detailPagerAdapter.setController(controller);
@@ -99,5 +126,10 @@ public class DetailMovieViewPagerFragment extends Fragment {
     private String getMovieId() {
         Bundle args = getArguments();
         return args.getString(MOVIE_ID);
+    }
+
+    private boolean getFavoriteFlag() {
+        Bundle args = getArguments();
+        return args.getBoolean(FAVORITE_FLAG);
     }
 }

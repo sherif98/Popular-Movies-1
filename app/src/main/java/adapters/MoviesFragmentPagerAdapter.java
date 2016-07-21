@@ -5,12 +5,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import fragments.DisplayMoviesFragment;
-import logic.TheMovieDatabaseAPI;
 
 public class MoviesFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private static final int PAGE_COUNT = 4;
-    private final TheMovieDatabaseAPI.RequestType[] TABS_TITLES = TheMovieDatabaseAPI.RequestType.values();
+    private static final int PAGE_COUNT = 5;
+    private final String[] TABS_TITLES = {"NOW_PLAYING", "POPULAR", "TOP_RATED", "UPCOMING", "FAVORITES"};
 
     public MoviesFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -29,6 +28,6 @@ public class MoviesFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
 
-        return TABS_TITLES[position].toString();
+        return TABS_TITLES[position];
     }
 }

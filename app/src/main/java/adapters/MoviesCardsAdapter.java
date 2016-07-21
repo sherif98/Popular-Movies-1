@@ -43,7 +43,11 @@ public class MoviesCardsAdapter extends RecyclerView.Adapter<MoviesCardsAdapter.
 
         public void bindMovie(Movie movie) {
             title.setText(movie.getTitle());
-            Picasso.with(image.getContext()).load(appendPath(movie.getPosterPath())).into(image);
+            if (movie.getPosterBitmap() == null) {
+                Picasso.with(image.getContext()).load(appendPath(movie.getPosterPath())).into(image);
+            } else {
+                image.setImageBitmap(movie.getPosterBitmap());
+            }
         }
 
         private String appendPath(String imagePath) {

@@ -1,5 +1,7 @@
 package logic;
 
+import android.graphics.Bitmap;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Movie {
@@ -9,11 +11,18 @@ public class Movie {
     private int id;
     @SerializedName("title")
     private String title;
+    private Bitmap posterBitmap;
 
     public Movie(String posterPath, int id, String title) {
         this.posterPath = posterPath;
         this.title = title;
         this.id = id;
+    }
+
+    public Movie(int id, Bitmap posterBitmap, String title) {
+        this.id = id;
+        this.posterBitmap = posterBitmap;
+        this.title = title;
     }
 
     public String getTitle() {
@@ -27,4 +36,9 @@ public class Movie {
     public int getId() {
         return id;
     }
+
+    public Bitmap getPosterBitmap() {
+        return posterBitmap;
+    }
+
 }

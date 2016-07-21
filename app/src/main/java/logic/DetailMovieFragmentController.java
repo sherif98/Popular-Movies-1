@@ -38,4 +38,6 @@ public class DetailMovieFragmentController {
         return FRAGMENTS_COUNT;
     }
 
+
+
 }
