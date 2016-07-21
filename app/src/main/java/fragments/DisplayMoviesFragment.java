@@ -89,12 +89,7 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     }
 
     private void setupRecyclerView() {
-//        if (getActivity().findViewById(R.id.movie_detail_tablet_container) == null) {
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-//        } else {
-//            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//        }
-
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         int requestNumber = getRequestNumber();
         attachAdapter(requestNumber);
     }
