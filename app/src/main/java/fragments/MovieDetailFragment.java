@@ -11,7 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -92,7 +92,7 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void setupAddToFavoriteButton(View rootView) {
-        Button button = ButterKnife.findById(rootView, R.id.movie_detail_add_favorites_button);
+        ImageButton button = ButterKnife.findById(rootView, R.id.movie_detail_add_favorites_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -204,10 +204,10 @@ public class MovieDetailFragment extends Fragment {
 
     private void setupMoviePoster(String url, View rootView) {
         mPosterImageView = ButterKnife.findById(rootView, R.id.movie_detil_poster);
-        if(url != null){
+        if (url != null) {
             Picasso.with(mPosterImageView.getContext()).load("http://image.tmdb.org/t/p/w500/" + url)
                     .into(mPosterImageView);
-        }else{
+        } else {
             mPosterImageView.setImageBitmap(
                     DatabaseBitmapUtility.getImage(getArguments().getByteArray(MOVIE_POSTER_BITMAP)));
         }
