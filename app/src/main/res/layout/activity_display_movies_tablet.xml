@@ -36,9 +36,9 @@
         </LinearLayout>
 
         <View
-        android:layout_width="@dimen/tabletUI_divier_width"
-        android:layout_height="match_parent"
-        android:background="#000000"/>
+            android:layout_width="@dimen/tabletUI_divier_width"
+            android:layout_height="match_parent"
+            android:background="#000000"/>
 
         <FrameLayout
             android:id="@+id/movie_detail_tablet_container"
