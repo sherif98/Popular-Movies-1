@@ -131,5 +131,4 @@ public class MovieDatabaseManager {
             return new MovieCursorWrapper(cursor);
         }
     }
-
 }
