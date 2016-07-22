@@ -36,11 +36,8 @@ public class MovieTrailersFragment extends Fragment implements MovieTrailerAdapt
 
     private static Bundle getArgument(DetailMovie detailMovie) {
         Bundle args = new Bundle();
-        List<Trailer> trailers = detailMovie.getTrailers().mTrailers;
-        if(trailers == null){
-            trailers = new ArrayList<>();
-        }
-        args.putSerializable(TRAILERS, detailMovie.getTrailers());
+        args.putParcelable(TRAILERS, detailMovie.getTrailers());
+//        args.putSerializable(TRAILERS, detailMovie.getTrailers());
         return args;
     }
 
@@ -56,7 +53,7 @@ public class MovieTrailersFragment extends Fragment implements MovieTrailerAdapt
         RecyclerView recyclerView = (RecyclerView) inflater
                 .inflate(R.layout.fragment_movie_trailers, container, false);
         List<Trailer> trailers = getTrailerList();
-        if(trailers == null){
+        if (trailers == null) {
             trailers = new ArrayList<>();
         }
         MovieTrailerAdapter adapter = new MovieTrailerAdapter(trailers, this);
@@ -67,7 +64,7 @@ public class MovieTrailersFragment extends Fragment implements MovieTrailerAdapt
 
     private List<Trailer> getTrailerList() {
         Bundle args = getArguments();
-        TrailerListModel trailerListModel = (TrailerListModel) args.getSerializable(TRAILERS);
+        TrailerListModel trailerListModel = (TrailerListModel) args.getParcelable(TRAILERS);
         if (trailerListModel != null) {
             return trailerListModel.mTrailers;
         }
