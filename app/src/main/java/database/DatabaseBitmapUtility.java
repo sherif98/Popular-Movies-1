@@ -9,7 +9,7 @@ public final class DatabaseBitmapUtility {
 
 
     private DatabaseBitmapUtility() {
-        throw new AssertionError();
+        throw new AssertionError("cant create objects");
     }
 
     public static byte[] getBytes(Bitmap bitmap) {
