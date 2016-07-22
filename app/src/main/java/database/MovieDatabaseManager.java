@@ -77,6 +77,10 @@ public class MovieDatabaseManager {
         return null;
     }
 
+    public boolean isMovieInDatabase(int movieId) {
+        return getDetailMovie(movieId) != null;
+    }
+
     private ContentValues getContentValues(DetailMovie movie) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MovieDbSchema.MovieTable.Cols.ID, movie.getId());

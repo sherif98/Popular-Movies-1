@@ -92,15 +92,21 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private void setupAddToFavoriteButton(View rootView) {
-        ImageButton button = ButterKnife.findById(rootView, R.id.movie_detail_add_favorites_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MovieDatabaseManager manager = MovieDatabaseManager.getInstance(getContext());
-                DetailMovie movie = getCurrentDisplayedMovie();
-                manager.addMovie(movie);
-            }
-        });
+        final ImageButton button = ButterKnife.findById(rootView, R.id.movie_detail_add_favorites_button);
+        final MovieDatabaseManager manager = MovieDatabaseManager.getInstance(getContext());
+        int currentDisplayedMovieId = getMovieId(getArguments());
+        if (manager.isMovieInDatabase(currentDisplayedMovieId)) {
+            button.setEnabled(false);
+        } else {
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DetailMovie movie = getCurrentDisplayedMovie();
+                    manager.addMovie(movie);
+                    button.setEnabled(false);
+                }
+            });
+        }
     }
 
     private DetailMovie getCurrentDisplayedMovie() {
@@ -121,10 +127,16 @@ public class MovieDetailFragment extends Fragment {
     }
 
     private Bitmap getMovieBackDropBitmap() {
+        if (mBackDropImage.getDrawable() == null) {
+            return null;
+        }
         return ((BitmapDrawable) mBackDropImage.getDrawable()).getBitmap();
     }
 
     private Bitmap getMoviePosterBitmap() {
+        if (mPosterImageView.getDrawable() == null) {
+            return null;
+        }
         return ((BitmapDrawable) mPosterImageView.getDrawable()).getBitmap();
     }
 
@@ -171,7 +183,7 @@ public class MovieDetailFragment extends Fragment {
         if (imageUrl != null) {
             Picasso.with(mBackDropImage.getContext()).load("http://image.tmdb.org/t/p/w500/" + imageUrl)
                     .into(mBackDropImage);
-        } else {
+        } else if (getArguments().getByteArray(MOVIE_BACKDROP_BITMAP) != null) {
             mBackDropImage.setImageBitmap(DatabaseBitmapUtility.getImage(
                     getArguments().getByteArray(MOVIE_BACKDROP_BITMAP)));
         }
@@ -207,7 +219,7 @@ public class MovieDetailFragment extends Fragment {
         if (url != null) {
             Picasso.with(mPosterImageView.getContext()).load("http://image.tmdb.org/t/p/w500/" + url)
                     .into(mPosterImageView);
-        } else {
+        } else if (getArguments().getByteArray(MOVIE_POSTER_BITMAP) != null) {
             mPosterImageView.setImageBitmap(
                     DatabaseBitmapUtility.getImage(getArguments().getByteArray(MOVIE_POSTER_BITMAP)));
         }
