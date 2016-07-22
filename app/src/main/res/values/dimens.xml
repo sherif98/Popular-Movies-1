@@ -5,4 +5,5 @@
     <dimen name="drawer_width">240dp</dimen>
     <dimen name="review_margin">10dp</dimen>
     <dimen name="genre_margin">10dp</dimen>
+    <dimen name="tabletUI_divier_width">8dp</dimen>
 </resources>
