@@ -1,15 +1,24 @@
 package fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.nanodegree.udacity.android.popularmovies.R;
+
+import java.util.List;
 
 import adapters.MovieDetailPagerAdapter;
 import butterknife.ButterKnife;
@@ -17,6 +26,8 @@ import database.MovieDatabaseManager;
 import logic.DetailMovie;
 import logic.DetailMovieFragmentController;
 import logic.TheMovieDatabaseAPI;
+import logic.Trailer;
+import logic.TrailerListModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,6 +43,7 @@ public class DetailMovieViewPagerFragment extends Fragment {
     private boolean isFavorite;
     private PagerSlidingTabStrip mPagerSlidingTabStrip;
     private ViewPager mViewPager;
+    private ShareActionProvider shareActionProvider;
 
     public static DetailMovieViewPagerFragment newInstance(int movieId, boolean isFavorite) {
         DetailMovieViewPagerFragment fragment = new DetailMovieViewPagerFragment();
@@ -65,10 +77,60 @@ public class DetailMovieViewPagerFragment extends Fragment {
         if (!isValidId(movieId)) {
             getActivity().finish();
         }
+        if(!isFavorite){
+            setHasOptionsMenu(true);
+        }
         setupUI();
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.v("menucreating", "yeah");
+        inflater.inflate(R.menu.detail_movie_menu, menu);
+        MenuItem shareAction = menu.findItem(R.id.share_movie);
+        shareActionProvider = (ShareActionProvider)
+                MenuItemCompat.getActionProvider(shareAction);
+    }
+
+    private Intent getShareIntent(DetailMovie movie) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        String data = getShareData(movie);
+        intent.putExtra(Intent.EXTRA_TEXT, data);
+        return intent;
+    }
+
+    private String getShareData(DetailMovie movie) {
+        String data = movie.getTitle() + "\n\n";
+        data = data + "Overview\n\n";
+        data = data + movie.getOverview() + "\n\n";
+        if (trailersFound(movie)) {
+            data = data + getTrailer(movie);
+        }
+        return data;
+    }
+
+    private String getTrailer(DetailMovie movie) {
+
+        return "Trailer:\n" + "https://www.youtube.com/watch?v=" +
+                movie.getTrailers().mTrailers.get(0).getVideoKey();
+    }
+
+    private boolean trailersFound(DetailMovie movie) {
+        if (movie.getTrailers() == null) {
+            return false;
+        }
+        TrailerListModel model = movie.getTrailers();
+        if (model.mTrailers == null) {
+            return false;
+        }
+        List<Trailer> trailers = model.mTrailers;
+        if (trailers.size() == 0) {
+            return false;
+        }
+        return true;
+    }
 
     private void setupUI() {
         if (isFavorite) {
@@ -88,6 +150,7 @@ public class DetailMovieViewPagerFragment extends Fragment {
             public void onResponse(Call<DetailMovie> call, Response<DetailMovie> response) {
                 DetailMovie detailMovie = response.body();
                 setupViewPager(detailMovie, detailPagerAdapter);
+                shareActionProvider.setShareIntent(getShareIntent(detailMovie));
             }
 
             @Override
@@ -102,6 +165,9 @@ public class DetailMovieViewPagerFragment extends Fragment {
         MovieDetailPagerAdapter detailPagerAdapter =
                 new MovieDetailPagerAdapter(getChildFragmentManager());
         setupViewPager(movie, detailPagerAdapter);
+        if (shareActionProvider != null) {
+            shareActionProvider.setShareIntent(getShareIntent(movie));
+        }
     }
 
 
