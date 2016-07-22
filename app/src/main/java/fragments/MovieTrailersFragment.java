@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adapters.MovieTrailerAdapter;
+import butterknife.ButterKnife;
 import logic.DetailMovie;
+import logic.RecyclerViewEmptySupport;
 import logic.Trailer;
 import logic.TrailerListModel;
 
@@ -49,16 +50,23 @@ public class MovieTrailersFragment extends Fragment implements MovieTrailerAdapt
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        RecyclerView recyclerView = (RecyclerView) inflater
-                .inflate(R.layout.fragment_movie_trailers, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_movie_trailers, container, false);
+        RecyclerViewEmptySupport recyclerView =
+                ButterKnife.findById(rootView, R.id.frag_movie_trailer_recycler_view);
         List<Trailer> trailers = getTrailerList();
         if (trailers == null) {
             trailers = new ArrayList<>();
         }
         MovieTrailerAdapter adapter = new MovieTrailerAdapter(trailers, this);
+        setupRecyclerView(recyclerView, adapter);
+        return rootView;
+    }
+
+    private void setupRecyclerView(RecyclerViewEmptySupport recyclerView, MovieTrailerAdapter adapter) {
+        View emptyView = LayoutInflater.from(getContext()).inflate(R.layout.empty_view, null);
+        recyclerView.setEmptyView(emptyView);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        return recyclerView;
     }
 
     private List<Trailer> getTrailerList() {

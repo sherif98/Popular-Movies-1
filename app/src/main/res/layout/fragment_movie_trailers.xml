@@ -1,8 +1,17 @@
-<android.support.v7.widget.RecyclerView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fragments.MovieTrailersFragment">
+    android:orientation="vertical">
 
-</android.support.v7.widget.RecyclerView>
+
+    <logic.RecyclerViewEmptySupport
+        android:id="@+id/frag_movie_trailer_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="fragments.MovieTrailersFragment">
+    </logic.RecyclerViewEmptySupport>
+
+    <include layout="@layout/empty_view"/>
+</LinearLayout>

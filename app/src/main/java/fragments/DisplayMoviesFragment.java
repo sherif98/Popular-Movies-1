@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +17,18 @@ import android.view.animation.OvershootInterpolator;
 
 import com.nanodegree.udacity.android.popularmovies.R;
 
+import java.util.ArrayList;
+
 import adapters.MoviesCardsAdapter;
 import adapters.RecyclerViewCursorAdapter;
+import butterknife.ButterKnife;
 import database.MovieCursorWrapper;
 import database.MovieDatabaseHelper;
 import database.MovieDbSchema;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import logic.Movie;
 import logic.MovieListModel;
+import logic.RecyclerViewEmptySupport;
 import logic.TheMovieDatabaseAPI;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,7 +41,7 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     private static final String TAG = DisplayMoviesFragment.class.getSimpleName();
     private final static String REQUEST_NUMBER = "request";
     private static final int FAVORITES_REQUSET_NUMBER = 4;
-    private RecyclerView recyclerView;
+    private RecyclerViewEmptySupport recyclerView;
     private CallBacks mCallbacks;
     private boolean isFavorite;
     private Cursor mCursor;
@@ -93,10 +97,10 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        recyclerView = (RecyclerView)
-                inflater.inflate(R.layout.fragment_display_movies, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_display_movies, container, false);
+        recyclerView = ButterKnife.findById(rootView, R.id.frag_display_movies_recycler_view);
         setupRecyclerView();
-        return recyclerView;
+        return rootView;
     }
 
     @Override
@@ -120,6 +124,9 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
 
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        View emptyView = LayoutInflater.from(getContext()).inflate(R.layout.empty_view, null);
+        Log.v("emptyviewnull", Boolean.toString(emptyView == null));
+        recyclerView.setEmptyView(emptyView);
         int requestNumber = getRequestNumber();
         attachAdapter(requestNumber);
     }
@@ -156,6 +163,9 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
             @Override
             public void onFailure(Call<MovieListModel> call, Throwable t) {
 //                Toast.makeText(getActivity(), "Connect Problem", Toast.LENGTH_SHORT).show();
+                MoviesCardsAdapter moviesCardsAdapter = new MoviesCardsAdapter(
+                        new ArrayList<Movie>(), DisplayMoviesFragment.this);
+                recyclerView.setAdapter(moviesCardsAdapter);
             }
         });
     }
@@ -188,9 +198,6 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
             SQLiteDatabase database = helper.getReadableDatabase();
             cursor = database.query(MovieDbSchema.MovieTable.NAME, null, null, null,
                     null, null, null);
-            if (mCursor != null && !mCursor.isClosed()) {
-                mCursor.close();
-            }
             mCursor = cursor;
             mDatabase = database;
             return null;
