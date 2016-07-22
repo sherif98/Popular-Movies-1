@@ -40,7 +40,8 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     private RecyclerView recyclerView;
     private CallBacks mCallbacks;
     private boolean isFavorite;
-
+    private Cursor mCursor;
+    private SQLiteDatabase mDatabase;
 
     /*
      * an interface to be implemented by the hosting activity
@@ -103,6 +104,17 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
         super.onResume();
         if (getRequestNumber() == FAVORITES_REQUSET_NUMBER) {
             setupFavoriteMoviesFragment();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mCursor != null && !mCursor.isClosed()) {
+            mCursor.close();
+        }
+        if (mDatabase != null && mDatabase.isOpen()) {
+            mDatabase.close();
         }
     }
 
@@ -176,6 +188,11 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
             SQLiteDatabase database = helper.getReadableDatabase();
             cursor = database.query(MovieDbSchema.MovieTable.NAME, null, null, null,
                     null, null, null);
+            if (mCursor != null && !mCursor.isClosed()) {
+                mCursor.close();
+            }
+            mCursor = cursor;
+            mDatabase = database;
             return null;
         }
 
