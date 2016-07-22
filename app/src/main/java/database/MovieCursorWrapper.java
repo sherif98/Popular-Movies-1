@@ -8,7 +8,7 @@ import android.util.Log;
 import logic.DetailMovie;
 import logic.Movie;
 
-class MovieCursorWrapper extends CursorWrapper {
+public class MovieCursorWrapper extends CursorWrapper {
 
     private static final int ID_INDEX = 1;
     private static final int TITLE_INDEX = 2;

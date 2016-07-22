@@ -2,6 +2,9 @@ package fragments;
 
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,10 +17,11 @@ import android.view.animation.OvershootInterpolator;
 
 import com.nanodegree.udacity.android.popularmovies.R;
 
-import java.util.List;
-
 import adapters.MoviesCardsAdapter;
-import database.MovieDatabaseManager;
+import adapters.RecyclerViewCursorAdapter;
+import database.MovieCursorWrapper;
+import database.MovieDatabaseHelper;
+import database.MovieDbSchema;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import logic.Movie;
 import logic.MovieListModel;
@@ -36,6 +40,7 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     private RecyclerView recyclerView;
     private CallBacks mCallbacks;
     private boolean isFavorite;
+
 
     /*
      * an interface to be implemented by the hosting activity
@@ -96,7 +101,7 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     @Override
     public void onResume() {
         super.onResume();
-        if(getRequestNumber() == FAVORITES_REQUSET_NUMBER){
+        if (getRequestNumber() == FAVORITES_REQUSET_NUMBER) {
             setupFavoriteMoviesFragment();
         }
     }
@@ -144,10 +149,11 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     }
 
     private void setupFavoriteMoviesFragment() {
-        MovieDatabaseManager movieDatabaseManager = MovieDatabaseManager.getInstance(getContext());
-        List<Movie> movies = movieDatabaseManager.getMovies();
-        MoviesCardsAdapter moviesCardsAdapter = new MoviesCardsAdapter(movies, DisplayMoviesFragment.this);
-        recyclerView.setAdapter(moviesCardsAdapter);
+//        MovieDatabaseManager movieDatabaseManager = MovieDatabaseManager.getInstance(getContext());
+//        List<Movie> movies = movieDatabaseManager.getMovies();
+//        MoviesCardsAdapter moviesCardsAdapter = new MoviesCardsAdapter(movies, DisplayMoviesFragment.this);
+//        recyclerView.setAdapter(moviesCardsAdapter);
+        new getMoviesTask().execute();
     }
 
 
@@ -159,5 +165,26 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     @Override
     public void onClickMovie(Movie movie) {
         mCallbacks.onMovieClicked(movie, isFavorite);
+    }
+
+    private class getMoviesTask extends AsyncTask<Void, Void, Void> {
+        private Cursor cursor;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            MovieDatabaseHelper helper = new MovieDatabaseHelper(getContext());
+            SQLiteDatabase database = helper.getReadableDatabase();
+            cursor = database.query(MovieDbSchema.MovieTable.NAME, null, null, null,
+                    null, null, null);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            MovieCursorWrapper movieCursorWrapper = new MovieCursorWrapper(cursor);
+            RecyclerViewCursorAdapter adapter = new RecyclerViewCursorAdapter(movieCursorWrapper,
+                    DisplayMoviesFragment.this);
+            recyclerView.setAdapter(adapter);
+        }
     }
 }

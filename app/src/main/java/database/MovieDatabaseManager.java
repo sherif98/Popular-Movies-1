@@ -31,6 +31,7 @@ public class MovieDatabaseManager {
         return sInstance;
     }
 
+    @Deprecated
     public List<Movie> getMovies() {
         List<Movie> movies = new ArrayList<>();
         MovieCursorWrapper cursor = null;
@@ -108,6 +109,7 @@ public class MovieDatabaseManager {
         }
     }
 
+    @Deprecated
     private class GetAllMoviesTask extends AsyncTask<Void, Void, MovieCursorWrapper> {
 
         @Override

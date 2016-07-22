@@ -5,7 +5,12 @@ import android.graphics.BitmapFactory;
 
 import java.io.ByteArrayOutputStream;
 
-public class DatabaseBitmapUtility {
+public final class DatabaseBitmapUtility {
+
+
+    private DatabaseBitmapUtility() {
+        throw new AssertionError();
+    }
 
     public static byte[] getBytes(Bitmap bitmap) {
         if (bitmap == null) {
@@ -17,7 +22,7 @@ public class DatabaseBitmapUtility {
     }
 
     public static Bitmap getImage(byte[] image) {
-        if(image == null){
+        if (image == null) {
             return null;
         }
         return BitmapFactory.decodeByteArray(image, 0, image.length);

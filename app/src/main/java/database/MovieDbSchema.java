@@ -1,6 +1,6 @@
 package database;
 
-class MovieDbSchema {
+public class MovieDbSchema {
 
     public static final class MovieTable {
         public static final String NAME = "movies";
