@@ -30,7 +30,7 @@ public class MovieReviewsFragment extends Fragment {
 
     private static Bundle createArguments(DetailMovie detailMovie) {
         Bundle args = new Bundle();
-        args.putSerializable(REVIEWS, detailMovie.getReviews());
+        args.putParcelable(REVIEWS, detailMovie.getReviews());
         return args;
     }
 
@@ -45,7 +45,7 @@ public class MovieReviewsFragment extends Fragment {
         // Inflate the layout for this fragment
         RecyclerView recyclerView = (RecyclerView)
                 inflater.inflate(R.layout.fragment_movie_reviews, container, false);
-        ReviewListModel reviewListModel = (ReviewListModel) getArguments().getSerializable(REVIEWS);
+        ReviewListModel reviewListModel = getArguments().getParcelable(REVIEWS);
         if (reviewListModel != null) {
             MovieReviewAdapter adapter = new MovieReviewAdapter(reviewListModel.results);
             recyclerView.setAdapter(adapter);

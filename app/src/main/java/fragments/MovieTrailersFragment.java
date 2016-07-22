@@ -37,7 +37,6 @@ public class MovieTrailersFragment extends Fragment implements MovieTrailerAdapt
     private static Bundle getArgument(DetailMovie detailMovie) {
         Bundle args = new Bundle();
         args.putParcelable(TRAILERS, detailMovie.getTrailers());
-//        args.putSerializable(TRAILERS, detailMovie.getTrailers());
         return args;
     }
 

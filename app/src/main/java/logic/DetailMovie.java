@@ -59,7 +59,6 @@ public class DetailMovie {
         mPosterBitmap = posterBitmap;
         mBackDropBitmap = backDropBitmap;
         mGenreList = new ArrayList<>();
-//        mTrailers = new TrailerListModel();
     }
 
     public Bitmap getBackDropBitmap() {
