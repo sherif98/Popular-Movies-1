@@ -93,13 +93,13 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
         return recyclerView;
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        if(getRequestNumber() == FAVORITES_REQUSET_NUMBER){
-//            setupFavoriteMoviesFragment();
-//        }
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(getRequestNumber() == FAVORITES_REQUSET_NUMBER){
+            setupFavoriteMoviesFragment();
+        }
+    }
 
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));

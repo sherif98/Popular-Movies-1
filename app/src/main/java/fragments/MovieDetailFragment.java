@@ -97,7 +97,7 @@ public class MovieDetailFragment extends Fragment {
         int currentDisplayedMovieId = getMovieId(getArguments());
         if (manager.isMovieInDatabase(currentDisplayedMovieId)) {
             button.setEnabled(false);
-            button.setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_clicked));
+            button.setImageResource(R.drawable.ic_favorite_clicked);
         } else {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -105,7 +105,7 @@ public class MovieDetailFragment extends Fragment {
                     DetailMovie movie = getCurrentDisplayedMovie();
                     manager.addMovie(movie);
                     button.setEnabled(false);
-                    button.setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_clicked));
+                    button.setImageResource(R.drawable.ic_favorite_clicked);
                 }
             });
         }
