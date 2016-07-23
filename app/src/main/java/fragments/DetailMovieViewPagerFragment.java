@@ -156,6 +156,9 @@ public class DetailMovieViewPagerFragment extends Fragment {
             @Override
             public void onResponse(Call<DetailMovie> call, Response<DetailMovie> response) {
                 DetailMovie detailMovie = response.body();
+                if (getRequest().equals("tv")) {
+                    detailMovie.setTVShow(true);
+                }
                 setupViewPager(detailMovie, detailPagerAdapter);
                 shareActionProvider.setShareIntent(getShareIntent(detailMovie));
             }
@@ -171,6 +174,9 @@ public class DetailMovieViewPagerFragment extends Fragment {
         DetailMovie movie = getDetailMovieFromDatabase();
         MovieDetailPagerAdapter detailPagerAdapter =
                 new MovieDetailPagerAdapter(getChildFragmentManager());
+        if (getRequest().equals("tv")) {
+            movie.setTVShow(true);
+        }
         setupViewPager(movie, detailPagerAdapter);
         if (shareActionProvider != null) {
             shareActionProvider.setShareIntent(getShareIntent(movie));
@@ -180,7 +186,7 @@ public class DetailMovieViewPagerFragment extends Fragment {
 
     private DetailMovie getDetailMovieFromDatabase() {
         MovieDatabaseManager manager = MovieDatabaseManager.getInstance(getContext());
-        return manager.getDetailMovie(Integer.parseInt(movieId));
+        return manager.getDetailMedia(Integer.parseInt(movieId), getRequest());
     }
 
     private void setupViewPager(DetailMovie detailMovie, MovieDetailPagerAdapter detailPagerAdapter) {

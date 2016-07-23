@@ -28,6 +28,7 @@ import logic.Movie;
 import logic.TheMovieDatabaseAPI;
 
 public class DisplayMoviesActivity extends AppCompatActivity implements DisplayMoviesFragment.CallBacks {
+    private static final String STATE = "state";
     private static final int MOVIES = 0;
     private static final int TV_SHOWS = 1;
     private TheMovieDatabaseAPI.Request mCurrentState;
@@ -40,7 +41,17 @@ public class DisplayMoviesActivity extends AppCompatActivity implements DisplayM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_masterdetail);
         setupDrawerLayout();
-        setupViewPager(TV_SHOWS);
+        int state = MOVIES;
+        if (savedInstanceState != null) {
+            state = savedInstanceState.getInt(STATE);
+        }
+        setupViewPager(state);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(STATE, mCurrentState.ordinal());
+        super.onSaveInstanceState(outState);
     }
 
     private void setupViewPager(int position) {
@@ -57,8 +68,6 @@ public class DisplayMoviesActivity extends AppCompatActivity implements DisplayM
                 mCurrentState = TheMovieDatabaseAPI.Request.TV;
                 break;
         }
-//        viewPager.removeAllViewsInLayout();
-//        viewPager.removeAllViews();
         viewPager.setAdapter(pagerAdapter);
         tabStrip.setViewPager(viewPager);
         mDrawerLayout.closeDrawer(mDrawerList);

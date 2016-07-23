@@ -107,13 +107,20 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (getRequestNumber() == MOVIES_FAVORITES_REQUSET_NUMBER) {
-            setupFavoriteMoviesFragment();
-        }
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        if (getRequestType() == TheMovieDatabaseAPI.Request.MOVIE) {
+//            if (getRequestNumber() == MOVIES_FAVORITES_REQUSET_NUMBER) {
+//                setupFavoriteMoviesFragment(MovieDbSchema.MovieTable.NAME);
+//            }
+//        } else {
+//            if (getRequestNumber() == TV_FAVORITES_REQUSET_NUMBER) {
+//                setupFavoriteMoviesFragment(MovieDbSchema.TVShowTable.NAME);
+//            }
+//        }
+//    }
+    //TODO fix onResume to avoid duplicate call
 
     @Override
     public void onDestroy() {
@@ -164,7 +171,7 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
         //TODO make favorite TV favorite list
         if (requestNumber == TV_FAVORITES_REQUSET_NUMBER) {
             isFavorite = true;
-//            setupFavoriteMoviesFragment();
+            setupFavoriteMoviesFragment(MovieDbSchema.TVShowTable.NAME);
         } else {
             isFavorite = false;
             TheMovieDatabaseAPI.TVShowRequestType requestType =
@@ -177,7 +184,7 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     private void attachMovieAdapter(int requestNumber) {
         if (requestNumber == MOVIES_FAVORITES_REQUSET_NUMBER) {
             isFavorite = true;
-            setupFavoriteMoviesFragment();
+            setupFavoriteMoviesFragment(MovieDbSchema.MovieTable.NAME);
         } else {
             isFavorite = false;
             TheMovieDatabaseAPI.MovieRequestType requestType =
@@ -210,12 +217,12 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
         });
     }
 
-    private void setupFavoriteMoviesFragment() {
+    private void setupFavoriteMoviesFragment(String tableName) {
 //        MovieDatabaseManager movieDatabaseManager = MovieDatabaseManager.getInstance(getContext());
 //        List<Movie> movies = movieDatabaseManager.getMovies();
 //        MoviesCardsAdapter moviesCardsAdapter = new MoviesCardsAdapter(movies, DisplayMoviesFragment.this);
 //        recyclerView.setAdapter(moviesCardsAdapter);
-        new getMoviesTask().execute();
+        new getMoviesTask().execute(tableName);
     }
 
 
@@ -234,14 +241,19 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
         mCallbacks.onMovieClicked(movie, isFavorite);
     }
 
-    private class getMoviesTask extends AsyncTask<Void, Void, Void> {
+    private class getMoviesTask extends AsyncTask<String, Void, Void> {
         private Cursor cursor;
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(String... tableName) {
             MovieDatabaseHelper helper = new MovieDatabaseHelper(getContext());
             SQLiteDatabase database = helper.getReadableDatabase();
-            cursor = database.query(MovieDbSchema.MovieTable.NAME, null, null, null,
+            cursor = database.query(tableName[0], null, null, null,
                     null, null, null);
             mCursor = cursor;
             mDatabase = database;

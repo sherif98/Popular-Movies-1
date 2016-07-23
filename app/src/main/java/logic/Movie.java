@@ -7,10 +7,16 @@ import com.google.gson.annotations.SerializedName;
 public class Movie {
     @SerializedName("poster_path")
     private String posterPath;
+
     @SerializedName("id")
     private int id;
+
     @SerializedName("name")
     private String title;
+
+    @SerializedName("original_title")
+    private String movieTitle;
+
     private Bitmap posterBitmap;
 
     public Movie(String posterPath, int id, String title) {
@@ -26,6 +32,9 @@ public class Movie {
     }
 
     public String getTitle() {
+        if (title == null) {
+            return movieTitle;
+        }
         return title;
     }
 

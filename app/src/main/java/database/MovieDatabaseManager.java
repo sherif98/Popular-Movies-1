@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +14,8 @@ import logic.DetailMovie;
 import logic.Movie;
 
 public class MovieDatabaseManager {
+    private static final String TV = "tv";
+    private static final String MOVIE = "movie";
     private static MovieDatabaseManager sInstance;
     private Context mContext;
     private MovieDatabaseHelper mMovieDatabaseHelper;
@@ -54,15 +55,33 @@ public class MovieDatabaseManager {
         return movies;
     }
 
-    public void addMovie(DetailMovie movie) {
-        ContentValues contentValues = getContentValues(movie);
-        new AddMovieTask().execute(contentValues);
+    public void addMedia(DetailMovie media) {
+        if (media.isTVShow()) {
+            addMedia(media, MovieDbSchema.TVShowTable.NAME);
+        } else {
+            addMedia(media, MovieDbSchema.MovieTable.NAME);
+        }
     }
 
-    public DetailMovie getDetailMovie(int movieId) {
+    private void addMedia(DetailMovie media, String tableName) {
+        ContentValues contentValues = getContentValues(media);
+        new AddMediaTask(tableName).execute(contentValues);
+    }
+
+    public DetailMovie getDetailMedia(int mediaId, String request) {
+        switch (request) {
+            case TV:
+                return getDetailMovie(mediaId, MovieDbSchema.TVShowTable.NAME);
+            case MOVIE:
+                return getDetailMovie(mediaId, MovieDbSchema.MovieTable.NAME);
+        }
+        return null;
+    }
+
+    private DetailMovie getDetailMovie(int movieId, String tableName) {
         MovieCursorWrapper cursor = null;
         try {
-            cursor = new GetDetailMovieTask().execute(movieId).get();
+            cursor = new GetDetailMovieTask(tableName).execute(movieId).get();
             if (cursor.getCount() == 0) {
                 return null;
             }
@@ -78,8 +97,11 @@ public class MovieDatabaseManager {
         return null;
     }
 
-    public boolean isMovieInDatabase(int movieId) {
-        return getDetailMovie(movieId) != null;
+    public boolean isMovieInDatabase(int movieId, boolean isTVShow) {
+        if (isTVShow) {
+            return getDetailMedia(movieId, TV) != null;
+        }
+        return getDetailMedia(movieId, MOVIE) != null;
     }
 
     private ContentValues getContentValues(DetailMovie movie) {
@@ -98,12 +120,17 @@ public class MovieDatabaseManager {
         return contentValues;
     }
 
-    private class AddMovieTask extends AsyncTask<ContentValues, Void, Void> {
+    private class AddMediaTask extends AsyncTask<ContentValues, Void, Void> {
+        String tableName;
+
+        public AddMediaTask(String tableName) {
+            this.tableName = tableName;
+        }
 
         @Override
         protected Void doInBackground(ContentValues... contentValues) {
             SQLiteDatabase database = mMovieDatabaseHelper.getWritableDatabase();
-            database.insert(MovieDbSchema.MovieTable.NAME, null, contentValues[0]);
+            database.insert(tableName, null, contentValues[0]);
             database.close();
             return null;
         }
@@ -122,12 +149,16 @@ public class MovieDatabaseManager {
     }
 
     private class GetDetailMovieTask extends AsyncTask<Integer, Void, MovieCursorWrapper> {
+        String tableName;
+
+        public GetDetailMovieTask(String tableName) {
+            this.tableName = tableName;
+        }
 
         @Override
         protected MovieCursorWrapper doInBackground(Integer... id) {
-            Log.v("whatistheid", id[0].toString());
             SQLiteDatabase database = mMovieDatabaseHelper.getReadableDatabase();
-            Cursor cursor = database.query(MovieDbSchema.MovieTable.NAME, null,
+            Cursor cursor = database.query(tableName, null,
                     MovieDbSchema.MovieTable.Cols.ID + " = ?",
                     new String[]{Integer.toString(id[0])}, null, null, null);
             return new MovieCursorWrapper(cursor);

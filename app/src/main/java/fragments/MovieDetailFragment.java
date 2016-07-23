@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class MovieDetailFragment extends Fragment {
     private static final String MOVIE_BACKDROP = "back_drop";
     private static final String MOVIE_POSTER_BITMAP = "poster_bitmap";
     private static final String MOVIE_BACKDROP_BITMAP = "back_bitmap";
+    private static final String MEDIA_TYPE = "media_type";
     private ImageView mPosterImageView;
     private ImageView mBackDropImage;
 
@@ -60,6 +62,7 @@ public class MovieDetailFragment extends Fragment {
         args.putString(MOVIE_DATE, detailMovie.getReleaseDate());
         args.putString(MOVIE_OVERVIEW, detailMovie.getOverview());
         args.putString(MOVIE_BACKDROP, detailMovie.getBackdropPath());
+        args.putBoolean(MEDIA_TYPE, detailMovie.isTVShow());
         args.putSerializable(MOVIE_GENRES, (Serializable) detailMovie.getGenreList());
         if (detailMovie.getPosterBitmap() != null) {
             args.putByteArray(MOVIE_POSTER_BITMAP,
@@ -93,7 +96,8 @@ public class MovieDetailFragment extends Fragment {
         final ImageButton button = ButterKnife.findById(rootView, R.id.movie_detail_add_favorites_button);
         final MovieDatabaseManager manager = MovieDatabaseManager.getInstance(getContext());
         int currentDisplayedMovieId = getMovieId(getArguments());
-        if (manager.isMovieInDatabase(currentDisplayedMovieId)) {
+        boolean isTVShow = getArguments().getBoolean(MEDIA_TYPE);
+        if (manager.isMovieInDatabase(currentDisplayedMovieId, isTVShow)) {
             button.setEnabled(false);
             button.setImageResource(R.drawable.ic_favorite_clicked);
         } else {
@@ -101,7 +105,8 @@ public class MovieDetailFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     DetailMovie movie = getCurrentDisplayedMovie();
-                    manager.addMovie(movie);
+                    Log.v("isittv", Boolean.toString(movie.isTVShow()));
+                    manager.addMedia(movie);
                     button.setEnabled(false);
                     button.setImageResource(R.drawable.ic_favorite_clicked);
                 }
@@ -118,7 +123,13 @@ public class MovieDetailFragment extends Fragment {
         String date = getMovieReleaseDateData(args);
         Bitmap poster = getMoviePosterBitmap();
         Bitmap backDrop = getMovieBackDropBitmap();
-        return new DetailMovie(id, title, overview, date, Double.parseDouble(vote), poster, backDrop);
+        DetailMovie movie =
+                new DetailMovie(id, title, overview, date, Double.parseDouble(vote), poster, backDrop);
+        boolean isTVShow = getArguments().getBoolean(MEDIA_TYPE);
+        if(isTVShow){
+            movie.setTVShow(true);
+        }
+        return movie;
     }
 
     private int getMovieId(Bundle args) {

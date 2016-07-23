@@ -29,8 +29,13 @@ public class DetailMovie {
     private ReviewListModel mReviews;
     @SerializedName("trailers")
     private TrailerListModel mTrailers;
+    @SerializedName("name")
+    private String name;
+
     private Bitmap mPosterBitmap;
     private Bitmap mBackDropBitmap;
+    private boolean TVShow;
+
 
     public DetailMovie(String backdropPath, List<Genre> genreList, int id, String title,
                        String overview, String poSterPath, String releaseDate,
@@ -86,6 +91,9 @@ public class DetailMovie {
     }
 
     public String getTitle() {
+        if (mTitle == null) {
+            return name;
+        }
         return mTitle;
     }
 
@@ -107,5 +115,14 @@ public class DetailMovie {
 
     public ReviewListModel getReviews() {
         return mReviews;
+    }
+
+    public boolean isTVShow() {
+
+        return TVShow;
+    }
+
+    public void setTVShow(boolean TVShow) {
+        this.TVShow = TVShow;
     }
 }

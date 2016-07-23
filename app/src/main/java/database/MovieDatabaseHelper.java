@@ -26,13 +26,14 @@ public class MovieDatabaseHelper extends SQLiteOpenHelper {
 
     private void updateMyDatabase(SQLiteDatabase database, int oldVersion, int newVersion) {
         if (oldVersion < 1) {
-            createMovieTable(database);
+            createTable(MovieDbSchema.MovieTable.NAME, database);
+            createTable(MovieDbSchema.TVShowTable.NAME, database);
         }
         //control other vesrions of database as it is updated
     }
 
-    private void createMovieTable(SQLiteDatabase database) {
-        database.execSQL("CREATE TABLE " + MovieDbSchema.MovieTable.NAME +
+    private void createTable(String tableName, SQLiteDatabase database) {
+        database.execSQL("CREATE TABLE " + tableName +
                 "(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 MovieDbSchema.MovieTable.Cols.ID + " INTEGER, " +
                 MovieDbSchema.MovieTable.Cols.TITLE + " TEXT, " +
@@ -41,7 +42,6 @@ public class MovieDatabaseHelper extends SQLiteOpenHelper {
                 MovieDbSchema.MovieTable.Cols.VOTE_AVERAGE + " TEXT, " +
                 MovieDbSchema.MovieTable.Cols.RELEASE_DATE + " TEXT, " +
                 MovieDbSchema.MovieTable.Cols.OVERVIEW + " TEXT);"
-
         );
     }
 }
