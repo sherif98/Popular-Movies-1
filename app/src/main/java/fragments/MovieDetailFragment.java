@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,7 +86,6 @@ public class MovieDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         Bundle args = getArguments();
         setupUI(args, rootView);
-        setupAddToFavoriteButton(rootView);
         return rootView;
     }
 
@@ -120,7 +118,6 @@ public class MovieDetailFragment extends Fragment {
         String date = getMovieReleaseDateData(args);
         Bitmap poster = getMoviePosterBitmap();
         Bitmap backDrop = getMovieBackDropBitmap();
-        Log.v("titleisfrag", title);
         return new DetailMovie(id, title, overview, date, Double.parseDouble(vote), poster, backDrop);
     }
 
@@ -150,6 +147,7 @@ public class MovieDetailFragment extends Fragment {
         setupMovieVote(getMovieVoteData(args), rootView);
         setupMovieOverview(getMovieOverviewData(args), rootView);
         setupGenres(getMovieGenreData(args), rootView);
+        setupAddToFavoriteButton(rootView);
     }
 
     private String getMoviePosterData(Bundle args) {

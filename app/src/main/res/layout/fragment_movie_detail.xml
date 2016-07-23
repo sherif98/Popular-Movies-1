@@ -67,10 +67,10 @@
                     android:src="@drawable/ic_favorite"
                     />
                 <!--<CheckBox android:id="@+id/movie_detail_add_favorites_checkbox"-->
-                          <!--style="?android:attr/starStyle"-->
-                          <!--android:layout_width="wrap_content"-->
-                          <!--android:layout_height="wrap_content"-->
-                    <!--/>-->
+                <!--style="?android:attr/starStyle"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--/>-->
                 <!--android:text="@string/add_to_favorites"-->
             </LinearLayout>
         </LinearLayout>

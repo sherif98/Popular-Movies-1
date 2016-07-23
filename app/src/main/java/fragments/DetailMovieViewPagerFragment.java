@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.ShareActionProvider;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -77,7 +76,7 @@ public class DetailMovieViewPagerFragment extends Fragment {
         if (!isValidId(movieId)) {
             getActivity().finish();
         }
-        if(!isFavorite){
+        if (!isFavorite) {
             setHasOptionsMenu(true);
         }
         setupUI();
@@ -86,7 +85,6 @@ public class DetailMovieViewPagerFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.v("menucreating", "yeah");
         inflater.inflate(R.menu.detail_movie_menu, menu);
         MenuItem shareAction = menu.findItem(R.id.share_movie);
         shareActionProvider = (ShareActionProvider)
