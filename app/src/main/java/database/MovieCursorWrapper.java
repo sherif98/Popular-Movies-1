@@ -3,7 +3,6 @@ package database;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import logic.DetailMovie;
 import logic.Movie;
@@ -24,7 +23,6 @@ public class MovieCursorWrapper extends CursorWrapper {
 
     public Movie getMovie() {
         String title = getString(TITLE_INDEX);
-        Log.v("movietitleis", title);
         byte[] poster = getBlob(POSTER_INDEX);
         int id = getInt(ID_INDEX);
         Bitmap posterBitmap = DatabaseBitmapUtility.getImage(poster);

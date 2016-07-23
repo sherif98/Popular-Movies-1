@@ -39,8 +39,10 @@ import retrofit2.Response;
  */
 public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapter.MovieClickListener {
     private static final String TAG = DisplayMoviesFragment.class.getSimpleName();
-    private final static String REQUEST_NUMBER = "request";
-    private static final int FAVORITES_REQUSET_NUMBER = 4;
+    private final static String REQUEST_NUMBER = "request_number";
+    private final static String REQUEST_TYPE = "request_type";
+    private static final int MOVIES_FAVORITES_REQUSET_NUMBER = 4;
+    private static final int TV_FAVORITES_REQUSET_NUMBER = 3;
     private RecyclerViewEmptySupport recyclerView;
     private CallBacks mCallbacks;
     private boolean isFavorite;
@@ -59,17 +61,19 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
         // Required empty public constructor
     }
 
-    public static DisplayMoviesFragment newInstance(int requestNumber) {
+    public static DisplayMoviesFragment newInstance(int requestNumber
+            , TheMovieDatabaseAPI.Request requestType) {
         DisplayMoviesFragment fragment = new DisplayMoviesFragment();
-        setupFragmentArguments(fragment, requestNumber);
+        Bundle args = createArguments(requestNumber, requestType);
+        fragment.setArguments(args);
         return fragment;
     }
 
-    private static void setupFragmentArguments(DisplayMoviesFragment fragment,
-                                               int requestNumber) {
+    private static Bundle createArguments(int requestNumber, TheMovieDatabaseAPI.Request requestType) {
         Bundle args = new Bundle();
         args.putInt(REQUEST_NUMBER, requestNumber);
-        fragment.setArguments(args);
+        args.putString(REQUEST_TYPE, requestType.toString());
+        return args;
     }
 
     @Override
@@ -106,7 +110,7 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     @Override
     public void onResume() {
         super.onResume();
-        if (getRequestNumber() == FAVORITES_REQUSET_NUMBER) {
+        if (getRequestNumber() == MOVIES_FAVORITES_REQUSET_NUMBER) {
             setupFavoriteMoviesFragment();
         }
     }
@@ -125,10 +129,10 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         View emptyView = LayoutInflater.from(getContext()).inflate(R.layout.empty_view, null);
-        Log.v("emptyviewnull", Boolean.toString(emptyView == null));
         recyclerView.setEmptyView(emptyView);
         int requestNumber = getRequestNumber();
-        attachAdapter(requestNumber);
+        TheMovieDatabaseAPI.Request requestType = getRequestType();
+        attachAdapter(requestType, requestNumber);
     }
 
     private int getRequestNumber() {
@@ -136,21 +140,57 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
         return args.getInt(REQUEST_NUMBER);
     }
 
+    private TheMovieDatabaseAPI.Request getRequestType() {
+        Bundle args = getArguments();
+        TheMovieDatabaseAPI.Request request =
+                TheMovieDatabaseAPI.Request.valueOf(args.getString(REQUEST_TYPE));
+        return request;
+    }
 
-    private void attachAdapter(int requestNumber) {
-        if (requestNumber == FAVORITES_REQUSET_NUMBER) {
+
+    private void attachAdapter(TheMovieDatabaseAPI.Request requestType, int requestNumber) {
+        switch (requestType) {
+            case MOVIE:
+                attachMovieAdapter(requestNumber);
+                break;
+            case TV:
+                Log.v("numberissss", Integer.toString(requestNumber));
+                attachTvShowAdapter(requestNumber);
+        }
+
+    }
+
+    private void attachTvShowAdapter(int requestNumber) {
+        //TODO make favorite TV favorite list
+        if (requestNumber == TV_FAVORITES_REQUSET_NUMBER) {
+            isFavorite = true;
+//            setupFavoriteMoviesFragment();
+        } else {
+            isFavorite = false;
+            TheMovieDatabaseAPI.TVShowRequestType requestType =
+                    getCorrespondingTVShowRequestType(requestNumber);
+            setupOnlineRequestFragments(TheMovieDatabaseAPI.Request.TV.toString().toLowerCase()
+                    , requestType.toString().toLowerCase());
+        }
+    }
+
+    private void attachMovieAdapter(int requestNumber) {
+        if (requestNumber == MOVIES_FAVORITES_REQUSET_NUMBER) {
             isFavorite = true;
             setupFavoriteMoviesFragment();
         } else {
             isFavorite = false;
-            setupOnlineRequestFragments(requestNumber);
+            TheMovieDatabaseAPI.MovieRequestType requestType =
+                    getCorrespondingMovieRequestType(requestNumber);
+            setupOnlineRequestFragments(TheMovieDatabaseAPI.Request.MOVIE.toString().toLowerCase()
+                    , requestType.toString().toLowerCase());
         }
     }
 
-    private void setupOnlineRequestFragments(int requestNumber) {
-        TheMovieDatabaseAPI.RequestType requestType = getCorrespondingRequestType(requestNumber);
+    private void setupOnlineRequestFragments(String type, String request) {
+
         TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
-        Call<MovieListModel> call = service.getMoviesList(requestType.toString().toLowerCase());
+        Call<MovieListModel> call = service.getMoviesList(type, request);
         call.enqueue(new Callback<MovieListModel>() {
             @Override
             public void onResponse(Call<MovieListModel> call, Response<MovieListModel> response) {
@@ -179,8 +219,13 @@ public class DisplayMoviesFragment extends Fragment implements MoviesCardsAdapte
     }
 
 
-    private TheMovieDatabaseAPI.RequestType getCorrespondingRequestType(int requestNumber) {
-        TheMovieDatabaseAPI.RequestType types[] = TheMovieDatabaseAPI.RequestType.values();
+    private TheMovieDatabaseAPI.MovieRequestType getCorrespondingMovieRequestType(int requestNumber) {
+        TheMovieDatabaseAPI.MovieRequestType types[] = TheMovieDatabaseAPI.MovieRequestType.values();
+        return types[requestNumber];
+    }
+
+    private TheMovieDatabaseAPI.TVShowRequestType getCorrespondingTVShowRequestType(int requestNumber) {
+        TheMovieDatabaseAPI.TVShowRequestType types[] = TheMovieDatabaseAPI.TVShowRequestType.values();
         return types[requestNumber];
     }
 

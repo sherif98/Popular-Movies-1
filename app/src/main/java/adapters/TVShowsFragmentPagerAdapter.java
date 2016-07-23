@@ -7,26 +7,24 @@ import android.support.v4.app.FragmentPagerAdapter;
 import fragments.DisplayMoviesFragment;
 import logic.TheMovieDatabaseAPI;
 
-public class MoviesFragmentPagerAdapter extends FragmentPagerAdapter {
+public class TVShowsFragmentPagerAdapter extends FragmentPagerAdapter {
+    private static final int PAGE_COUNT = 4;
+    private final String[] TABS_TITLES = {"ON_THE_AIR", "POPULAR", "TOP_RATED", "FAVORITES"};
 
-    private static final int PAGE_COUNT = 5;
-    private final String[] TABS_TITLES = {"NOW_PLAYING", "POPULAR", "TOP_RATED", "UPCOMING", "FAVORITES"};
-
-    public MoviesFragmentPagerAdapter(FragmentManager fm) {
+    public TVShowsFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
     public Fragment getItem(int position) {
-        return DisplayMoviesFragment.newInstance(position,
-                TheMovieDatabaseAPI.Request.MOVIE);
+        return DisplayMoviesFragment.newInstance(position, TheMovieDatabaseAPI.Request.TV);
     }
-
 
     @Override
     public long getItemId(int position) {
-        return 4 * 100 + position;
+        return 5 * 100 + position;
     }
+
 
     @Override
     public int getCount() {

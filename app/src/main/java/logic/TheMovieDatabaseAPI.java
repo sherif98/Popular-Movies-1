@@ -13,8 +13,16 @@ public interface TheMovieDatabaseAPI {
 
     String BASE_URL = "http://api.themoviedb.org/";
 
-    enum RequestType {
+    enum Request {
+        MOVIE, TV
+    }
+
+    enum MovieRequestType {
         NOW_PLAYING, POPULAR, TOP_RATED, UPCOMING
+    }
+
+    enum TVShowRequestType {
+        ON_THE_AIR, POPULAR, TOP_RATED
     }
 
 
@@ -27,15 +35,15 @@ public interface TheMovieDatabaseAPI {
     /*
      * use to get list of movies (popular movies, upcoming movies, etc..)
      */
-    @GET("/3/movie/{request}" + RETROFIT_API_KEY)
-    Call<MovieListModel> getMoviesList(@Path("request") String request);
+    @GET("/3/{type}/{request}" + RETROFIT_API_KEY)
+    Call<MovieListModel> getMoviesList(@Path("type") String type, @Path("request") String request);
 
 
     /*
      * use it to get details about a movie given the id (movie name, pictures, overview, etc..)
      */
-    @GET("/3/movie/{id}" + RETROFIT_API_KEY + "&append_to_response=reviews,trailers")
-    Call<DetailMovie> getmovieData(@Path("id") String id);
+    @GET("/3/{type}/{id}" + RETROFIT_API_KEY + "&append_to_response=reviews,trailers")
+    Call<DetailMovie> getmovieData(@Path("type") String type, @Path("id") String id);
 
 //    /*
 //     * use it to get reviews of a movie given its id

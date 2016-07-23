@@ -9,7 +9,7 @@ public class Movie {
     private String posterPath;
     @SerializedName("id")
     private int id;
-    @SerializedName("title")
+    @SerializedName("name")
     private String title;
     private Bitmap posterBitmap;
 

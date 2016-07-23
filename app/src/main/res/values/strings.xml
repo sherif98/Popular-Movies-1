@@ -6,4 +6,10 @@
     <string name="add_to_favorites">Add to favorite</string>
     <string name="share">Share</string>
     <string name="no_data_available">No data available</string>
+    <string-array name="drawer_list_array">
+        <item>Movies</item>
+        <item>TV Shows</item>
+    </string-array>
+    <string name="drawer_open">Drawer Open</string>
+    <string name="drawer_close">Drawer Close</string>
 </resources>

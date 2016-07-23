@@ -38,23 +38,26 @@ public class DetailMovieViewPagerFragment extends Fragment {
 
     private static final String MOVIE_ID = "movie_id";
     private static final String FAVORITE_FLAG = "favorite";
+    private static final String REQUEST_TYPE = "request_type";
     private String movieId;
     private boolean isFavorite;
     private PagerSlidingTabStrip mPagerSlidingTabStrip;
     private ViewPager mViewPager;
     private ShareActionProvider shareActionProvider;
 
-    public static DetailMovieViewPagerFragment newInstance(int movieId, boolean isFavorite) {
+    public static DetailMovieViewPagerFragment newInstance(int movieId, boolean isFavorite,
+                                                           TheMovieDatabaseAPI.Request request) {
         DetailMovieViewPagerFragment fragment = new DetailMovieViewPagerFragment();
-        Bundle args = createArguments(movieId, isFavorite);
+        Bundle args = createArguments(movieId, isFavorite, request);
         fragment.setArguments(args);
         return fragment;
     }
 
-    private static Bundle createArguments(int movieId, boolean isFavorite) {
+    private static Bundle createArguments(int movieId, boolean isFavorite, TheMovieDatabaseAPI.Request request) {
         Bundle args = new Bundle();
         args.putString(MOVIE_ID, Integer.toString(movieId));
         args.putBoolean(FAVORITE_FLAG, isFavorite);
+        args.putString(REQUEST_TYPE, request.toString().toLowerCase());
         return args;
     }
 
@@ -138,9 +141,15 @@ public class DetailMovieViewPagerFragment extends Fragment {
         }
     }
 
+    private String getRequest() {
+        Bundle args = getArguments();
+        return args.getString(REQUEST_TYPE);
+    }
+
     private void setupUIFromAPICall() {
+
         TheMovieDatabaseAPI service = TheMovieDatabaseAPI.retrofit.create(TheMovieDatabaseAPI.class);
-        Call<DetailMovie> call = service.getmovieData(movieId);
+        Call<DetailMovie> call = service.getmovieData(getRequest(), movieId);
         final MovieDetailPagerAdapter detailPagerAdapter =
                 new MovieDetailPagerAdapter(getChildFragmentManager());
         call.enqueue(new Callback<DetailMovie>() {
